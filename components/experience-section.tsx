@@ -50,7 +50,7 @@ const experienceData = [
     title: "Software Engineer",
     company: "Tech Solutions Inc.",
     location: "Bengaluru, India (Remote)",
-    duration: "Jan 2025 - June 2025",
+    duration: "Dec 2024 - Present",
     description:
       "Trained and worked on enterprise applications using .NET Core, Angular, and Microsoft SQL Server. Key contributions included designing RESTful APIs in C#, building responsive UIs with Angular and RxJS, developing complex T‑SQL stored procedures, and integrating authentication and role‑based security within Agile sprints.",
     technologies: [
@@ -89,7 +89,7 @@ const experienceData = [
     title: "Freelance Full-Stack Developer",
     company: "Self-Employed",
     location: "Remote",
-    duration: "Present",
+    duration: "Jan 2025 - Present",
     description:
       "Partnered with diverse clients to architect and deliver custom web solutions—ranging from e‑commerce platforms to interactive dashboards—using React or Angular on the front end, Node.js/Express with MySQL on the back end, and AWS (S3, CloudFront) for secure asset delivery. Implemented JWT‑based authentication, optimized image pipelines via presigned URLs, and maintained clear documentation and on‑time delivery.",
     technologies: [
