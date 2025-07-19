@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import React, { lazy, Suspense, FC, ReactNode, HTMLAttributes } from "react";
 import {
   Briefcase,
   Building,
@@ -9,39 +10,103 @@ import {
   Cpu,
   Code,
   Users,
+  LucideProps,
 } from "lucide-react";
-import { lazy, Suspense } from "react";
 
-// Mock components for Card as its definition is not provided.
-// In a real application, you would import these from your UI library (e.g., shadcn/ui).
-const Card = ({ children, className, style }) => (
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+}
+interface CardContentProps extends HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+}
+interface AnimatedBackgroundProps {
+  sectionColor: string;
+  variant?: "about" | "other";
+}
+
+const Card: FC<CardProps> = ({ children, className = "", style, ...props }) => (
   <div
     className={`${className} rounded-lg border bg-card text-card-foreground shadow-sm`}
     style={style}
+    {...props}
   >
     {children}
   </div>
 );
 
-const CardContent = ({ children, className }) => (
-  <div className={`${className} p-6`}>{children}</div>
+const CardContent: FC<CardContentProps> = ({
+  children,
+  className = "",
+  ...props
+}) => (
+  <div className={`${className} p-6`} {...props}>
+    {children}
+  </div>
 );
 
-// Lazy load the animated background for better performance
-// Since the component is not available, I'll use a fallback gradient.
-const AnimatedBackground = lazy(() => import("./animated-background"));
+// Mock AnimatedBackground component, assuming it handles its own internal styles
+const AnimatedBackground: FC<AnimatedBackgroundProps> = ({
+  sectionColor,
+  variant,
+}) => {
+  const styles = `
+    @keyframes moveGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .animate-gradient {
+      background-size: 400% 400%;
+      animation: moveGradient 15s ease infinite;
+    }
+    @keyframes blob {
+      0% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(30px, -50px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+      100% { transform: translate(0px, 0px) scale(1); }
+    }
+    .animate-blob { animation: blob 7s infinite; }
+    .animation-delay-2000 { animation-delay: -2s; }
+    .animation-delay-4000 { animation-delay: -4s; }
+  `;
+
+  return (
+    <>
+      <style>{styles}</style>
+      <div
+        className="absolute inset-0 w-full h-full opacity-30 z-0 animate-gradient"
+        style={{
+          background: `linear-gradient(45deg, ${sectionColor}20, ${sectionColor}40, ${sectionColor}20)`,
+        }}
+      ></div>
+      {/* Specific blob animations for 'about' variant, or general if not specified */}
+      {variant === "about" && (
+        <>
+          <div
+            className="absolute top-1/4 left-1/4 w-48 h-48 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"
+            style={{ backgroundColor: sectionColor }}
+          ></div>
+          <div
+            className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"
+            style={{ backgroundColor: sectionColor }}
+          ></div>
+        </>
+      )}
+    </>
+  );
+};
 
 const modernColors = {
-  background: "#0A0A0F",
-  surface: "#1A1A2E",
-  primary: "#16213E",
-  accent: "#00D4FF",
-  secondary: "#8B5CF6",
-  success: "#10B981",
+  background: "#020617", // Dark blue-gray, consistent with previous sections
+  surface: "#0f172a",
+  primary: "#1e293b",
+  accent: "#38bdf8",
+  secondary: "#818cf8",
+  success: "#4ade80", // Green for GPA and some experience highlights
   warning: "#F59E0B",
   danger: "#EF4444",
   text: "#E2E8F0",
-  muted: "#64748B",
+  muted: "#94a3b8",
 };
 
 const experienceData = [
@@ -68,7 +133,7 @@ const experienceData = [
   {
     id: 2,
     title: "Remote AI Model Training Expert",
-    company: "AI Innovators",
+    company: "Outlier.ai",
     location: "Remote",
     duration: "Oct 2024 - Dec 2024",
     description:
@@ -111,21 +176,10 @@ export default function ExperienceSection() {
   return (
     <section
       id="experience"
-      className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative overflow-hidden font-inter"
     >
-      <Suspense
-        fallback={
-          <div className="absolute inset-0 bg-gradient-to-b from-green-900 to-slate-900" />
-        }
-      >
-        {/* The AnimatedBackground component is not defined, so a fallback is used. */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(ellipse at top, ${modernColors.primary}, ${modernColors.background})`,
-          }}
-        />
-      </Suspense>
+      {/* Removed Suspense block with AnimatedBackground and its fallback */}
+      {/* Removed the AnimatedBackground component import and usage */}
 
       <div className="container mx-auto relative z-10">
         <motion.div
@@ -170,7 +224,7 @@ export default function ExperienceSection() {
         <div className="relative max-w-4xl mx-auto">
           {/* Vertical line */}
           <div
-            className="absolute left-4 sm:left-1/2 top-5 h-full w-0.5"
+            className="absolute left-4 sm:left-1/2 top-0 h-full w-0.5 transform sm:-translate-x-1/2" // Added transform for precise centering on desktop
             style={{
               background: `linear-gradient(to bottom, ${modernColors.surface}, ${modernColors.success}, ${modernColors.surface})`,
             }}
@@ -179,32 +233,35 @@ export default function ExperienceSection() {
           {experienceData.map((exp, index) => (
             <motion.div
               key={exp.id}
-              className="mb-12 flex justify-between items-center w-full"
+              className="mb-12 flex items-center w-full relative" // Added relative for absolute positioning of dot
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
               viewport={{ once: true }}
             >
-              <div
-                className={`hidden sm:block w-5/12 ${
-                  index % 2 !== 0 ? "order-1" : "order-3"
-                }`}
-              ></div>
-
               {/* Timeline Dot */}
-              <div className="z-10 flex items-center order-2">
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center"
-                  style={{
-                    backgroundColor: exp.color,
-                    border: `4px solid ${modernColors.surface}`,
-                  }}
-                >
-                  <Briefcase className="w-4 h-4 text-white" />
-                </div>
+              <div
+                className={`absolute z-10 flex items-center justify-center w-8 h-8 rounded-full -translate-y-1/2 ${
+                  // Added -translate-y-1/2 for vertical centering
+                  index % 2 === 0
+                    ? "left-0 sm:left-1/2 -translate-x-1/2" // Left edge for mobile, center for desktop
+                    : "left-0 sm:left-1/2 -translate-x-1/2" // Same for both, will be adjusted by card positioning
+                }`}
+                style={{
+                  backgroundColor: exp.color,
+                  border: `4px solid ${modernColors.surface}`,
+                }}
+              >
+                <Briefcase className="w-4 h-4 text-white" />
               </div>
 
-              <div className="w-full sm:w-5/12 order-3 sm:order-1">
+              <div
+                className={`w-full sm:w-5/12 ${
+                  index % 2 === 0
+                    ? "ml-auto pr-0 sm:pr-8 sm:pl-0" // Push to right on desktop, add padding-right
+                    : "mr-auto pl-0 sm:pl-8 sm:pr-0" // Push to left on desktop, add padding-left
+                } pl-12 sm:pl-0`} // Add padding-left for mobile to clear dot
+              >
                 <motion.div
                   whileHover={{ y: -5, transition: { duration: 0.2 } }}
                 >

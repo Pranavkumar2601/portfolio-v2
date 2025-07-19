@@ -274,9 +274,10 @@ const App: FC = () => {
       <section
         id="contact"
         className="min-h-screen w-full flex items-center justify-center py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-inter"
-        style={{ backgroundColor: modernColors.background }}
+        // Removed style={{ backgroundColor: modernColors.background }}
       >
-        {/* Background Blobs */}
+        {/* Removed Background Blobs */}
+        {/*
         <div
           className="absolute top-0 -left-4 w-72 h-72 sm:w-96 sm:h-96 rounded-full filter blur-3xl opacity-30 sm:opacity-40 animate-blob"
           style={{ background: modernColors.secondary }}
@@ -285,6 +286,7 @@ const App: FC = () => {
           className="absolute bottom-0 -right-4 w-72 h-72 sm:w-96 sm:h-96 rounded-full filter blur-3xl opacity-30 sm:opacity-40 animate-blob animation-delay-4000"
           style={{ background: modernColors.accent }}
         ></div>
+        */}
 
         <div className="container mx-auto relative z-10">
           {/* Section Title */}
@@ -494,8 +496,6 @@ const App: FC = () => {
                 </div>
 
                 <div className="p-6 sm:p-8 flex-1 flex flex-col overflow-y-auto justify-between">
-                  {" "}
-                  {/* Added overflow-y-auto */}
                   <motion.form
                     onSubmit={handleSubmit}
                     className="space-y-6 flex-1 flex flex-col"

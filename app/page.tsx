@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 
 const modernColors = {
   background: "#0A0A0F",
@@ -47,7 +48,7 @@ const skillsData = {
     "Node",
     "Next",
   ],
-  database: ["SQL"],
+  database: ["SQL", "MySQL", "PostgreSQL", "AWS RDS"],
   languages: ["Python", "C", "Java", "C#", "Typescript"],
   mlFrameworks: [
     "Numpy",
@@ -131,13 +132,19 @@ export default function Portfolio() {
                   }}
                 >
                   <div
-                    className="w-full h-full rounded-full flex items-center justify-center text-4xl sm:text-5xl lg:text-6xl font-bold"
+                    className="w-full h-full rounded-full flex items-center justify-center overflow-hidden"
                     style={{
                       backgroundColor: modernColors.surface,
-                      color: modernColors.text,
                     }}
                   >
-                    PK
+                    <Image
+                      src="/profile.jpg"
+                      alt="Pranav Kumar"
+                      width={200}
+                      height={200}
+                      className="w-full h-full object-cover rounded-full"
+                      priority
+                    />
                   </div>
                 </div>
                 <motion.div
