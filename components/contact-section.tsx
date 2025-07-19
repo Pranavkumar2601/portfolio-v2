@@ -21,6 +21,8 @@ import {
   CheckCircle,
   AlertTriangle,
   Loader,
+  MessageSquareText,
+  ArrowLeft,
 } from "lucide-react";
 
 // Type Definitions for Mock Components
@@ -33,6 +35,7 @@ interface CardContentProps extends HTMLAttributes<HTMLDivElement> {
 interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   disabled?: boolean;
+  variant?: "default" | "outline" | "ghost"; // Added variant for button styling
 }
 interface InputProps extends HTMLAttributes<HTMLInputElement> {
   value: string;
@@ -61,14 +64,30 @@ const CardContent: FC<CardContentProps> = ({
   </div>
 );
 
-const Button: FC<ButtonProps> = ({ children, className = "", ...props }) => (
-  <button
-    className={`inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none px-4 py-2 ${className}`}
-    {...props}
-  >
-    {children}
-  </button>
-);
+const Button: FC<ButtonProps> = ({
+  children,
+  className = "",
+  variant = "default",
+  ...props
+}) => {
+  const baseClasses =
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none px-4 py-2";
+
+  const variantClasses = {
+    default: "text-white shadow-lg hover:opacity-90",
+    outline: "border border-current text-current hover:bg-opacity-10",
+    ghost: "text-current hover:bg-opacity-10",
+  };
+
+  return (
+    <button
+      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
 const Input: FC<InputProps> = ({ className = "", ...props }) => (
   <input
@@ -109,7 +128,6 @@ interface FormDataState {
 
 type FormStatus = "idle" | "sending" | "success" | "error";
 
-// A modern, sleek color palette
 const modernColors = {
   background: "#020617",
   surface: "#0f172a",
@@ -127,17 +145,20 @@ const App: FC = () => {
     message: "",
   });
   const [formStatus, setFormStatus] = useState<FormStatus>("idle");
+  const [showContactForm, setShowContactForm] = useState(false);
 
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src =
-      "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
-    script.async = true;
-    document.body.appendChild(script);
+    if (!(window as any).emailjs) {
+      const script = document.createElement("script");
+      script.src =
+        "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+      script.async = true;
+      document.body.appendChild(script);
 
-    return () => {
-      document.body.removeChild(script);
-    };
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
   }, []);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -154,10 +175,17 @@ const App: FC = () => {
     const templateID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID as string;
     const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY as string;
 
+    if (!serviceID || !templateID || !publicKey) {
+      console.error("EmailJS environment variables are not set.");
+      setFormStatus("error");
+      setTimeout(() => setFormStatus("idle"), 5000);
+      return;
+    }
+
     const templateParams = {
       from_name: formData.name,
       from_email: formData.email,
-      to_name: "Pranav Kumar",
+      to_name: "Pranav Kumar", // Replace with your name
       message: formData.message,
     };
 
@@ -169,7 +197,10 @@ const App: FC = () => {
             console.log("SUCCESS!", response.status, response.text);
             setFormStatus("success");
             setFormData({ name: "", email: "", message: "" });
-            setTimeout(() => setFormStatus("idle"), 5000);
+            setTimeout(() => {
+              setFormStatus("idle");
+              setShowContactForm(false); // Flip back to contact info after success
+            }, 5000);
           },
           (err: any) => {
             console.error("FAILED...", err);
@@ -218,7 +249,7 @@ const App: FC = () => {
       icon: Linkedin,
       label: "LinkedIn",
       href: "https://www.linkedin.com/in/pranav-kumar-279a741a0",
-      color: "#0A66C2",
+      color: "#0A66C2", // LinkedIn brand color
     },
   ];
 
@@ -231,6 +262,10 @@ const App: FC = () => {
         }
         .animate-blob { animation: blob 7s infinite; }
         .animation-delay-4000 { animation-delay: -4s; }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* For Safari */
+        }
     `;
 
   return (
@@ -238,9 +273,10 @@ const App: FC = () => {
       <style>{styles}</style>
       <section
         id="contact"
-        className="min-h-screen w-full flex items-center justify-center py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
+        className="min-h-screen w-full flex items-center justify-center py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-inter"
         style={{ backgroundColor: modernColors.background }}
       >
+        {/* Background Blobs */}
         <div
           className="absolute top-0 -left-4 w-72 h-72 sm:w-96 sm:h-96 rounded-full filter blur-3xl opacity-30 sm:opacity-40 animate-blob"
           style={{ background: modernColors.secondary }}
@@ -251,6 +287,7 @@ const App: FC = () => {
         ></div>
 
         <div className="container mx-auto relative z-10">
+          {/* Section Title */}
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -288,18 +325,27 @@ const App: FC = () => {
             </p>
           </motion.div>
 
+          {/* Flip Card Container */}
           <Card
-            className="max-w-6xl mx-auto border-2 backdrop-blur-xl overflow-hidden transition-all duration-300"
+            className="max-w-4xl mx-auto border-2 backdrop-blur-xl overflow-hidden transition-all duration-300 relative min-h-[550px]" // Fixed min-height for all sizes
             style={{
               backgroundColor: `${modernColors.surface}BF`,
               borderColor: modernColors.primary,
               boxShadow: `0 20px 60px ${modernColors.background}90`,
+              transformStyle: "preserve-3d", // Enable 3D transformations for children
             }}
           >
-            <CardContent className="p-0">
-              <div className="grid md:grid-cols-2">
+            <CardContent className="p-0 h-full">
+              {/* Front Side: Contact Information */}
+              <motion.div
+                className="absolute inset-0 backface-hidden flex flex-col md:flex-row h-full w-full" // Ensure it takes full height and width
+                initial={{ rotateY: 0 }}
+                animate={{ rotateY: showContactForm ? 180 : 0 }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+                style={{ transformOrigin: "center center" }}
+              >
                 <div
-                  className="p-6 sm:p-8 md:border-r-2"
+                  className="p-6 sm:p-8 md:border-r-2 flex-1 flex flex-col overflow-y-auto" // Added overflow-y-auto
                   style={{ borderColor: modernColors.primary }}
                 >
                   <motion.div
@@ -357,7 +403,7 @@ const App: FC = () => {
                     ))}
                   </div>
 
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-4 mb-8">
                     {socialLinks.map((social, index) => (
                       <motion.a
                         key={social.label}
@@ -379,18 +425,97 @@ const App: FC = () => {
                       </motion.a>
                     ))}
                   </div>
+
+                  {/* Button to flip to form */}
+                  <div className="mt-auto pt-8">
+                    <Button
+                      onClick={() => setShowContactForm(true)}
+                      className="w-full font-semibold text-white transition-all duration-300 hover:opacity-90"
+                      style={{
+                        background: `linear-gradient(90deg, ${modernColors.accent}, ${modernColors.secondary})`,
+                        boxShadow: `0 4px 20px ${modernColors.accent}50`,
+                      }}
+                    >
+                      <MessageSquareText className="w-5 h-5 mr-2" />
+                      Send a Message
+                    </Button>
+                  </div>
                 </div>
 
-                <div className="p-6 sm:p-8">
+                {/* Placeholder for the other half when showing contact info - NOW CLICKABLE */}
+                <div
+                  className="p-6 sm:p-8 flex-1 hidden md:flex items-center justify-center flex-col text-center cursor-pointer transition-colors duration-300 hover:bg-opacity-50" // Added cursor-pointer and hover effect
+                  onClick={() => setShowContactForm(true)} // Added onClick
+                  style={{
+                    backgroundColor: `${modernColors.primary}40`,
+                    color: modernColors.muted,
+                    fontSize: "1.125rem",
+                    lineHeight: "1.75rem",
+                    borderRadius: "0 1rem 1rem 0",
+                  }}
+                >
+                  <Send
+                    className="w-16 h-16 mb-4"
+                    style={{ color: modernColors.accent }}
+                  />
+                  <p className="max-w-xs">
+                    Ready to start a conversation? Click here to send a message!
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Back Side: Message Form */}
+              <motion.div
+                className="absolute inset-0 backface-hidden flex flex-col md:flex-row h-full w-full" // Ensure it takes full height and width
+                initial={{ rotateY: -180 }} // Start rotated for the back side
+                animate={{ rotateY: showContactForm ? 0 : -180 }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+                style={{ transformOrigin: "center center" }}
+              >
+                {/* Placeholder for the other half when showing form - NOW CLICKABLE */}
+                <div
+                  className="p-6 sm:p-8 flex-1 hidden md:flex items-center justify-center flex-col text-center cursor-pointer transition-colors duration-300 hover:bg-opacity-50" // Added cursor-pointer and hover effect
+                  onClick={() => setShowContactForm(false)} // Added onClick
+                  style={{
+                    backgroundColor: `${modernColors.primary}40`,
+                    color: modernColors.muted,
+                    fontSize: "1.125rem",
+                    lineHeight: "1.75rem",
+                    borderRadius: "1rem 0 0 1rem",
+                  }}
+                >
+                  <Mail
+                    className="w-16 h-16 mb-4"
+                    style={{ color: modernColors.secondary }}
+                  />
+                  <p className="max-w-xs">
+                    Want to see my contact info again? Click here to go back!
+                  </p>
+                </div>
+
+                <div className="p-6 sm:p-8 flex-1 flex flex-col overflow-y-auto justify-between">
+                  {" "}
+                  {/* Added overflow-y-auto */}
                   <motion.form
                     onSubmit={handleSubmit}
-                    className="space-y-6"
+                    className="space-y-6 flex-1 flex flex-col"
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: showContactForm ? 1 : 0 }} // Only animate opacity when visible
+                    transition={{
+                      duration: 0.3,
+                      delay: showContactForm ? 0.4 : 0,
+                    }}
                     noValidate
                   >
+                    <h3
+                      className="text-2xl font-bold mb-2"
+                      style={{ color: modernColors.text }}
+                    >
+                      Send Me a Message
+                    </h3>
+                    <p className="mb-4" style={{ color: modernColors.muted }}>
+                      I'd love to hear from you.
+                    </p>
                     <Input
                       required
                       name="name"
@@ -460,9 +585,19 @@ const App: FC = () => {
                       {formStatus === "success" && "Message Sent!"}
                       {formStatus === "error" && "Please fill all fields"}
                     </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setShowContactForm(false)}
+                      className="w-full mt-2 font-semibold transition-all duration-300 hover:opacity-90"
+                      style={{ color: modernColors.muted }}
+                    >
+                      <ArrowLeft className="w-5 h-5 mr-2" />
+                      Back to Contact Info
+                    </Button>
                   </motion.form>
                 </div>
-              </div>
+              </motion.div>
             </CardContent>
           </Card>
         </div>
