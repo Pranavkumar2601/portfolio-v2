@@ -48,7 +48,7 @@ const experienceData = [
   {
     id: 1,
     title: "Software Engineer",
-    company: "Tech Solutions Inc.",
+    company: "Confendential",
     location: "Bengaluru, India (Remote)",
     duration: "Dec 2024 - Present",
     description:
