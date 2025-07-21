@@ -138,7 +138,7 @@ export default function Portfolio() {
                     }}
                   >
                     <Image
-                      src="/me2.png"
+                      src="/me2.webp"
                       alt="Pranav Kumar"
                       width={200}
                       height={200}
