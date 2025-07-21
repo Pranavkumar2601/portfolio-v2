@@ -13,8 +13,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-// Mock components for Button and Card as their definitions are not provided.
-// In a real application, you would import these from your UI library (e.g., shadcn/ui).
 const Button = ({ children, onClick, className, style, variant }) => (
   <button
     onClick={onClick}
@@ -37,10 +35,6 @@ const Card = ({ children, className, style }) => (
 const CardContent = ({ children, className }) => (
   <div className={`${className} p-6`}>{children}</div>
 );
-
-// Lazy load the animated background for better performance
-// Since the component is not available, I'll use a fallback gradient.
-// const AnimatedBackground = lazy(() => import("./animated-background"));
 
 const modernColors = {
   background: "#0A0A0F",
@@ -492,7 +486,7 @@ export default function RealProjectsSection() {
           >
             Want to see more projects? Check out my{" "}
             <a
-              href="https://github.com/pranavkumar"
+              href="https://github.com/Pranavkumar2601?tab=repositories"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold hover:underline transition-colors duration-300"
