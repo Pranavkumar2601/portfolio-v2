@@ -13,7 +13,22 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-const Button = ({ children, onClick, className, style, variant }) => (
+// Add type annotations for destructured props
+interface ButtonProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
+  variant?: string;
+}
+
+const Button = ({
+  children,
+  onClick,
+  className,
+  style,
+  variant,
+}: ButtonProps) => (
   <button
     onClick={onClick}
     className={`${className} inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none`}
@@ -70,7 +85,7 @@ const realProjects = [
       "AWS S3",
       "CloudFront",
     ],
-    github: "https://github.com/Pranavkumar2601/mastersound",
+    github: process.env.NEXT_PUBLIC_GITHUB + "/mastersound",
     live: "https://anritvox.com/",
     category: "Full Stack",
     period: "June 2025 - July 2025",
@@ -105,7 +120,7 @@ const realProjects = [
       "Pandas",
       "Scikit-learn",
     ],
-    github: "https://github.com/Pranavkumar2601/BeyondTheBoundary",
+    github: process.env.NEXT_PUBLIC_GITHUB + "/BeyondTheBoundary",
     // live: "https://beyond-boundary-demo.vercel.app",
     category: "Machine Learning",
     period: "Nov 2023 - April 2024",
@@ -123,7 +138,7 @@ const realProjects = [
   },
   {
     id: 3,
-    title: "Portfolio Website",
+    title: process.env.NEXT_PUBLIC_SITE_NAME || "Portfolio Website",
     subtitle: "Personal Portfolio with 3D elements",
     description:
       "My personal portfolio website to showcase my skills and projects, built with Next.js and Framer Motion for smooth animations.",
@@ -131,7 +146,7 @@ const realProjects = [
       "This portfolio is a testament to modern web development practices, featuring a clean design, responsive layout, and interactive 3D elements to create a memorable user experience. It's deployed on Vercel for optimal performance and availability.",
     image: "/portfolio.png",
     technologies: ["Next.js", "React", "Framer Motion", "Tailwind CSS"],
-    github: "https://github.com/Pranavkumar2601/portfolio-v2",
+    github: process.env.NEXT_PUBLIC_GITHUB + "/portfolio-v2",
     live: "https://pranav26.netlify.app/",
     category: "Web Development",
     period: "July 2025 - Present",
@@ -486,7 +501,7 @@ export default function RealProjectsSection() {
           >
             Want to see more projects? Check out my{" "}
             <a
-              href="https://github.com/Pranavkumar2601?tab=repositories"
+              href={process.env.NEXT_PUBLIC_GITHUB + "?tab=repositories"}
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold hover:underline transition-colors duration-300"

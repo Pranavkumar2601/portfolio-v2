@@ -185,7 +185,7 @@ const App: FC = () => {
     const templateParams = {
       from_name: formData.name,
       from_email: formData.email,
-      to_name: "Pranav Kumar", // Replace with your name
+      to_name: process.env.NEXT_PUBLIC_OWNER_NAME || "Name",
       message: formData.message,
     };
 
@@ -199,7 +199,7 @@ const App: FC = () => {
             setFormData({ name: "", email: "", message: "" });
             setTimeout(() => {
               setFormStatus("idle");
-              setShowContactForm(false); // Flip back to contact info after success
+              setShowContactForm(false);
             }, 5000);
           },
           (err: any) => {
@@ -226,14 +226,14 @@ const App: FC = () => {
     {
       icon: Mail,
       label: "Email",
-      value: "pranavsingh9471@gmail.com",
-      href: "mailto:pranavsingh9471@gmail.com",
+      value: process.env.NEXT_PUBLIC_EMAIL || "[email]",
+      href: `mailto:${process.env.NEXT_PUBLIC_EMAIL}`,
     },
     {
       icon: Phone,
       label: "Phone",
-      value: "+91 9955388960",
-      href: "tel:+919955388960",
+      value: process.env.NEXT_PUBLIC_PHONE || "[phone]",
+      href: `tel:${process.env.NEXT_PUBLIC_PHONE}`,
     },
     { icon: MapPin, label: "Location", value: "Bangalore, India", href: "#" },
   ];
@@ -242,13 +242,13 @@ const App: FC = () => {
     {
       icon: Github,
       label: "GitHub",
-      href: "https://github.com/Pranavkumar2601",
+      href: process.env.NEXT_PUBLIC_GITHUB || "#",
       color: modernColors.text,
     },
     {
       icon: Linkedin,
       label: "LinkedIn",
-      href: "https://www.linkedin.com/in/pranav-kumar-279a741a0",
+      href: process.env.NEXT_PUBLIC_LINKEDIN || "#",
       color: "#0A66C2", // LinkedIn brand color
     },
   ];

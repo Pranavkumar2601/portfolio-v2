@@ -1,8 +1,17 @@
-"use client"
+"use client";
 
-import { motion, useScroll, useTransform } from "framer-motion"
-import { useState, useEffect } from "react"
-import { Home, User, GraduationCap, Code, Briefcase, Mail, FileText, Award } from "lucide-react"
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useState, useEffect } from "react";
+import {
+  Home,
+  User,
+  GraduationCap,
+  Code,
+  Briefcase,
+  Mail,
+  FileText,
+  Award,
+} from "lucide-react";
 
 const modernColors = {
   background: "#0A0A0F",
@@ -15,76 +24,100 @@ const modernColors = {
   danger: "#EF4444",
   text: "#E2E8F0",
   muted: "#64748B",
-}
+};
 
 const sections = [
   { id: "home", label: "Home", icon: Home, color: modernColors.accent },
   { id: "about", label: "About", icon: User, color: modernColors.secondary },
-  { id: "education", label: "Education", icon: GraduationCap, color: modernColors.success },
+  {
+    id: "education",
+    label: "Education",
+    icon: GraduationCap,
+    color: modernColors.success,
+  },
   { id: "skills", label: "Skills", icon: Code, color: modernColors.warning },
-  { id: "projects", label: "Projects", icon: Briefcase, color: modernColors.danger },
-  { id: "research", label: "Research", icon: FileText, color: modernColors.secondary },
-  { id: "experience", label: "Experience", icon: Award, color: modernColors.success },
+  {
+    id: "projects",
+    label: "Projects",
+    icon: Briefcase,
+    color: modernColors.danger,
+  },
+  {
+    id: "research",
+    label: "Research",
+    icon: FileText,
+    color: modernColors.secondary,
+  },
+  {
+    id: "experience",
+    label: "Experience",
+    icon: Award,
+    color: modernColors.success,
+  },
   { id: "contact", label: "Contact", icon: Mail, color: "#EC4899" },
-]
+];
 
 export default function SmoothDualTrackNavigation() {
-  const [activeSection, setActiveSection] = useState("home")
-  const [isVisible, setIsVisible] = useState(true)
-  const { scrollYProgress } = useScroll()
+  const [activeSection, setActiveSection] = useState("home");
+  const [isVisible, setIsVisible] = useState(true);
+  const { scrollYProgress } = useScroll();
 
-  const trainPosition = useTransform(scrollYProgress, [0, 1], [0, (sections.length - 1) * 80])
+  const trainPosition = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [0, (sections.length - 1) * 80]
+  );
 
   useEffect(() => {
-    let lastScrollY = window.scrollY
-    let ticking = false
+    let lastScrollY = window.scrollY;
+    let ticking = false;
 
     const updateScrollDirection = () => {
-      const scrollY = window.scrollY
-      setIsVisible(scrollY < lastScrollY || scrollY < 100)
-      lastScrollY = scrollY > 0 ? scrollY : 0
-      ticking = false
-    }
+      const scrollY = window.scrollY;
+      setIsVisible(scrollY < lastScrollY || scrollY < 100);
+      lastScrollY = scrollY > 0 ? scrollY : 0;
+      ticking = false;
+    };
 
     const onScroll = () => {
       if (!ticking) {
-        requestAnimationFrame(updateScrollDirection)
-        ticking = true
+        requestAnimationFrame(updateScrollDirection);
+        ticking = true;
       }
-    }
+    };
 
     const observerOptions = {
       threshold: 0.6,
       rootMargin: "-20% 0px -20% 0px",
-    }
+    };
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          setActiveSection(entry.target.id)
+          setActiveSection(entry.target.id);
         }
-      })
-    }, observerOptions)
+      });
+    }, observerOptions);
 
     sections.forEach((section) => {
-      const element = document.getElementById(section.id)
-      if (element) observer.observe(element)
-    })
+      const element = document.getElementById(section.id);
+      if (element) observer.observe(element);
+    });
 
-    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      observer.disconnect()
-      window.removeEventListener("scroll", onScroll)
-    }
-  }, [])
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
+    const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" })
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }
+  };
 
   return (
     <motion.nav
@@ -121,16 +154,23 @@ export default function SmoothDualTrackNavigation() {
           className="absolute left-4 w-6 h-6 rounded-full border-2 shadow-lg backdrop-blur-sm"
           style={{
             y: trainPosition,
-            backgroundColor: sections.find((s) => s.id === activeSection)?.color || modernColors.accent,
+            backgroundColor:
+              sections.find((s) => s.id === activeSection)?.color ||
+              modernColors.accent,
             borderColor: modernColors.surface,
-            boxShadow: `0 0 20px ${sections.find((s) => s.id === activeSection)?.color || modernColors.accent}40`,
+            boxShadow: `0 0 20px ${
+              sections.find((s) => s.id === activeSection)?.color ||
+              modernColors.accent
+            }40`,
           }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
         >
           <motion.div
             className="absolute inset-1 rounded-full"
             style={{
-              backgroundColor: sections.find((s) => s.id === activeSection)?.color || modernColors.accent,
+              backgroundColor:
+                sections.find((s) => s.id === activeSection)?.color ||
+                modernColors.accent,
             }}
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
@@ -140,8 +180,8 @@ export default function SmoothDualTrackNavigation() {
         {/* Navigation Stations */}
         <div className="relative space-y-4">
           {sections.map((section, index) => {
-            const isActive = activeSection === section.id
-            const Icon = section.icon
+            const isActive = activeSection === section.id;
+            const Icon = section.icon;
 
             return (
               <motion.button
@@ -149,8 +189,12 @@ export default function SmoothDualTrackNavigation() {
                 onClick={() => scrollToSection(section.id)}
                 className="group relative flex items-center space-x-3 p-2 rounded-lg transition-all duration-300 hover:scale-105"
                 style={{
-                  backgroundColor: isActive ? `${section.color}20` : "transparent",
-                  border: `1px solid ${isActive ? section.color : "transparent"}`,
+                  backgroundColor: isActive
+                    ? `${section.color}20`
+                    : "transparent",
+                  border: `1px solid ${
+                    isActive ? section.color : "transparent"
+                  }`,
                 }}
                 whileHover={{ x: 5 }}
                 whileTap={{ scale: 0.95 }}
@@ -159,9 +203,13 @@ export default function SmoothDualTrackNavigation() {
                 <div
                   className="w-4 h-4 rounded-full border-2 transition-all duration-300"
                   style={{
-                    backgroundColor: isActive ? section.color : modernColors.surface,
+                    backgroundColor: isActive
+                      ? section.color
+                      : modernColors.surface,
                     borderColor: isActive ? section.color : modernColors.muted,
-                    boxShadow: isActive ? `0 0 15px ${section.color}40` : "none",
+                    boxShadow: isActive
+                      ? `0 0 15px ${section.color}40`
+                      : "none",
                   }}
                 />
 
@@ -169,20 +217,28 @@ export default function SmoothDualTrackNavigation() {
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300"
                   style={{
-                    backgroundColor: isActive ? `${section.color}30` : `${modernColors.surface}80`,
-                    border: `1px solid ${isActive ? section.color : modernColors.muted}40`,
+                    backgroundColor: isActive
+                      ? `${section.color}30`
+                      : `${modernColors.surface}80`,
+                    border: `1px solid ${
+                      isActive ? section.color : modernColors.muted
+                    }40`,
                   }}
                 >
                   <Icon
                     className="w-4 h-4 transition-colors duration-300"
-                    style={{ color: isActive ? section.color : modernColors.muted }}
+                    style={{
+                      color: isActive ? section.color : modernColors.muted,
+                    }}
                   />
                 </div>
 
                 {/* Label */}
                 <motion.span
                   className="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden lg:block"
-                  style={{ color: isActive ? section.color : modernColors.text }}
+                  style={{
+                    color: isActive ? section.color : modernColors.text,
+                  }}
                   initial={{ opacity: 0, x: -10 }}
                   whileHover={{ opacity: 1, x: 0 }}
                 >
@@ -211,7 +267,7 @@ export default function SmoothDualTrackNavigation() {
                   {section.label}
                 </div>
               </motion.button>
-            )
+            );
           })}
         </div>
 
@@ -227,11 +283,13 @@ export default function SmoothDualTrackNavigation() {
             className="w-full rounded-full"
             style={{
               height: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]),
-              backgroundColor: sections.find((s) => s.id === activeSection)?.color || modernColors.accent,
+              backgroundColor:
+                sections.find((s) => s.id === activeSection)?.color ||
+                modernColors.accent,
             }}
           />
         </motion.div>
       </div>
     </motion.nav>
-  )
+  );
 }

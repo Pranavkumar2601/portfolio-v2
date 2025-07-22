@@ -79,19 +79,19 @@ export default function Portfolio() {
   };
 
   const handleEmailClick = () => {
-    window.location.href = "mailto:pranavsingh9471@gmail.com";
+    window.location.href = `mailto:${process.env.NEXT_PUBLIC_EMAIL}`;
   };
 
   const handlePhoneClick = () => {
-    window.location.href = "tel:+919955388960";
+    window.location.href = `tel:${process.env.NEXT_PUBLIC_PHONE}`;
   };
 
   const handleLinkedInClick = () => {
-    window.open("www.linkedin.com/in/pranav-kumar-279a741a0", "_blank");
+    window.open(process.env.NEXT_PUBLIC_LINKEDIN, "_blank");
   };
 
   const handleGitHubClick = () => {
-    window.open("https://github.com/Pranavkumar2601", "_blank");
+    window.open(process.env.NEXT_PUBLIC_GITHUB, "_blank");
   };
 
   return (
@@ -183,7 +183,7 @@ export default function Portfolio() {
                   }}
                   className="block sm:inline"
                 >
-                  Pranav Kumar
+                  {process.env.NEXT_PUBLIC_OWNER_NAME || "Name"}
                 </motion.span>
               </h1>
 

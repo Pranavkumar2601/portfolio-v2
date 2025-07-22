@@ -30,7 +30,7 @@ const researchData = [
     volume: "",
     date: "November 2024",
     doi: "N/A",
-    authors: ["Pranav Kumar", "MS. Samyuktha B"],
+    authors: [process.env.NEXT_PUBLIC_OWNER_NAME, "MS. Samyuktha B"],
     abstract:
       "This research presents a comprehensive machine learning approach to optimize cricket player selection through advanced performance analytics. The study leverages historical player data, statistical analysis, and predictive modeling to provide data-driven recommendations for team composition and player substitutions during matches.",
     keywords: [
@@ -384,7 +384,7 @@ export default function ResearchSection() {
           >
             Interested in collaboration or have questions about my research?{" "}
             <a
-              href="mailto:pranavsingh9471@gmail.com"
+              href={`mailto:${process.env.NEXT_PUBLIC_EMAIL}`}
               className="font-semibold hover:underline transition-colors duration-300"
               style={{ color: modernColors.secondary }}
             >
