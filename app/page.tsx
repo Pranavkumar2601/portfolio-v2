@@ -183,7 +183,7 @@ export default function Portfolio() {
                   }}
                   className="block sm:inline"
                 >
-                  {process.env.NEXT_PUBLIC_OWNER_NAME || "Name"}
+                  {process.env.NEXT_PUBLIC_OWNER_NAME || "Pranav Kumar"}
                 </motion.span>
               </h1>
 
