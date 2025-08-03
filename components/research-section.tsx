@@ -4,61 +4,8 @@ import { motion } from "framer-motion";
 import { ExternalLink, FileText, Award, Calendar, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { lazy, Suspense } from "react";
-
-const AnimatedBackground = lazy(() => import("./animated-background"));
-
-const modernColors = {
-  background: "#0A0A0F",
-  surface: "#1A1A2E",
-  primary: "#16213E",
-  accent: "#00D4FF",
-  secondary: "#8B5CF6",
-  success: "#10B981",
-  warning: "#F59E0B",
-  danger: "#EF4444",
-  text: "#E2E8F0",
-  muted: "#64748B",
-};
-
-const researchData = [
-  {
-    id: 1,
-    title:
-      "Beyond The Boundary: Cricket Player Selection Using Performance Analytics",
-    journal: "International Journal of Computer Applications-Springer",
-    volume: "",
-    date: "November 2024",
-    doi: "N/A",
-    authors: [process.env.NEXT_PUBLIC_OWNER_NAME, "MS. Samyuktha B"],
-    abstract:
-      "This research presents a comprehensive machine learning approach to optimize cricket player selection through advanced performance analytics. The study leverages historical player data, statistical analysis, and predictive modeling to provide data-driven recommendations for team composition and player substitutions during matches.",
-    keywords: [
-      "Machine Learning",
-      "Sports Analytics",
-      "Cricket",
-      "Performance Analysis",
-      "Data Mining",
-    ],
-    methodology: [
-      "Data Collection from multiple cricket databases",
-      "Feature Engineering and Statistical Analysis",
-      "Machine Learning Model Development (Random Forest, KNN, Decision Trees)",
-      "Performance Evaluation and Validation",
-      "Real-time Recommendation System Implementation",
-    ],
-    results: [
-      "Achieved 87% accuracy in player performance prediction",
-      "Reduced team selection time by 60%",
-      "Improved match outcome prediction by 23%",
-      "Successfully deployed on AWS EC2 with real-time capabilities",
-    ],
-    impact: "High",
-    citations: "N/A",
-    downloads: "N/A",
-    color: modernColors.secondary,
-  },
-];
+import { researchData } from "@/data/research";
+import { modernColors } from "@/data/education";
 
 export default function ResearchSection() {
   return (
@@ -66,17 +13,6 @@ export default function ResearchSection() {
       id="research"
       className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative overflow-hidden"
     >
-      <Suspense
-        fallback={
-          <div className="absolute inset-0 bg-gradient-to-b from-purple-900 to-slate-800" />
-        }
-      >
-        <AnimatedBackground
-          sectionColor={modernColors.secondary}
-          variant="research"
-        />
-      </Suspense>
-
       <div className="container mx-auto relative z-10 lg:ml-20 xl:ml-28">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -349,20 +285,26 @@ export default function ResearchSection() {
                     >
                       <strong>DOI:</strong> {research.doi}
                     </div>
-                    <Button
-                      className="font-semibold transition-all duration-300"
-                      style={{
-                        backgroundColor: research.color,
-                        color: "white",
-                        border: "none",
-                      }}
-                      onClick={() =>
-                        window.open(`https://doi.org/${research.doi}`, "_blank")
-                      }
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      View Publication
-                    </Button>
+                    {research.doi !== "N/A" && (
+                      <Button
+                        className="font-semibold transition-all duration-300"
+                        style={{
+                          backgroundColor: research.color,
+                          color: "white",
+                          border: "none",
+                        }}
+                        onClick={() =>
+                          window.open(
+                            `https://doi.org/${research.doi}`,
+                            "_blank",
+                            "noopener,noreferrer"
+                          )
+                        }
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        View Publication
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

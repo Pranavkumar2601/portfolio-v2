@@ -27,11 +27,17 @@ interface AnimatedBackgroundProps {
     | "contact"
     | "education"
     | "research";
+  className?: string;
+  animate?: boolean;
+  blur?: number;
 }
 
 export default function AnimatedBackground({
   sectionColor = modernColors.accent,
   variant = "home",
+  className = "",
+  animate = false,
+  blur = 0,
 }: AnimatedBackgroundProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isClient, setIsClient] = useState(false);

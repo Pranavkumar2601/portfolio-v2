@@ -2,211 +2,22 @@
 
 import { motion } from "framer-motion";
 import {
-  GraduationCap,
   Award,
   Calendar,
   MapPin,
   Star,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react"; // Added ChevronLeft, ChevronRight
-import React, {
-  useState,
-  lazy,
-  Suspense,
-  FC,
-  ReactNode,
-  HTMLAttributes,
-} from "react"; // Added useState
-
-// --- Mock Components for standalone use ---
-// In your actual app, you would import these from your component library
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
-}
-interface CardContentProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
-}
-
-const Card: FC<CardProps> = ({ children, className = "", style, ...props }) => (
-  <div
-    className={`${className} rounded-lg border bg-card text-card-foreground shadow-sm`}
-    style={{ ...style, backgroundColor: "rgba(26, 26, 46, 0.7)" }} // Added background color for cards
-    {...props}
-  >
-    {children}
-  </div>
-);
-
-const CardContent: FC<CardContentProps> = ({
-  children,
-  className = "",
-  ...props
-}) => (
-  <div className={`${className} p-6`} {...props}>
-    {children}
-  </div>
-);
-
-interface AnimatedBackgroundProps {
-  // Keeping this interface for completeness, though the component is removed
-  sectionColor: string;
-  variant?: "about" | "other";
-}
-
-const AnimatedBackground: FC<AnimatedBackgroundProps> = ({
-  sectionColor,
-  variant,
-}) => {
-  const styles = `
-    @keyframes moveGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .animate-gradient {
-      background-size: 400% 400%;
-      animation: moveGradient 15s ease infinite;
-    }
-    @keyframes blob {
-      0% { transform: translate(0px, 0px) scale(1); }
-      33% { transform: translate(30px, -50px) scale(1.1); }
-      66% { transform: translate(-20px, 20px) scale(0.9); }
-      100% { transform: translate(0px, 0px) scale(1); }
-    }
-    .animate-blob { animation: blob 7s infinite; }
-    .animation-delay-2000 { animation-delay: -2s; }
-    .animation-delay-4000 { animation-delay: -4s; }
-  `;
-
-  return (
-    <>
-      <style>{styles}</style>
-      <div
-        className="absolute inset-0 w-full h-full opacity-30 z-0 animate-gradient"
-        style={{
-          background: `linear-gradient(45deg, ${sectionColor}20, ${sectionColor}40, ${sectionColor}20)`,
-        }}
-      ></div>
-      {variant === "about" && (
-        <>
-          <div
-            className="absolute top-1/4 left-1/4 w-48 h-48 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"
-            style={{ backgroundColor: sectionColor }}
-          ></div>
-          <div
-            className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"
-            style={{ backgroundColor: sectionColor }}
-          ></div>
-        </>
-      )}
-    </>
-  );
-};
-
-const modernColors = {
-  background: "#0A0A0F",
-  surface: "#1A1A2E",
-  primary: "#16213E",
-  accent: "#00D4FF",
-  secondary: "#8B5CF6",
-  success: "#10B981",
-  warning: "#F59E0B",
-  danger: "#EF4444",
-  text: "#E2E8F0",
-  muted: "#64748B",
-};
-
-const educationData = [
-  {
-    id: 1,
-    degree: "Master of Computer Applications (MCA)",
-    institution: "PES University",
-    location: "Bangalore, India",
-    duration: "2022 - 2024",
-    gpa: "7.79/10.0",
-    grade: "First Class with Distinction",
-    specialization: "Software Engineering & Machine Learning",
-    achievements: [
-      "Distinction Award for Academic Excellence",
-      "Published Research in International Journal",
-      "Active participation in coding competitions",
-    ],
-    coursework: [
-      "Advanced Data Structures & Algorithms",
-      "Machine Learning & AI",
-      "Database Management Systems",
-      "Software Engineering",
-      "Web Technologies",
-      "Cloud Computing",
-      "Research Methodology",
-    ],
-    projects: [
-      "Beyond The Boundary - Cricket Analytics ML System",
-      "E-Commerce Platform using Angular",
-    ],
-    color: modernColors.accent,
-    icon: GraduationCap,
-  },
-  {
-    id: 2,
-    degree: "Bachelor of Computer Applications (BCA)",
-    institution: "Previous Institution",
-    location: "India",
-    duration: "2019 - 2022",
-    gpa: "7.0/10.0",
-    grade: "First Class",
-    specialization: "Computer Science & Programming",
-    achievements: [
-      "Consistent Academic Performance",
-      "Programming Competition Participant",
-      "Volunteer for Tech Events",
-    ],
-    coursework: [
-      "Programming Fundamentals (C, Java, Python)",
-      "Data Structures & Algorithms",
-      "Database Systems",
-      "Computer Networks",
-      "Operating Systems",
-      "Software Development",
-    ],
-    projects: [
-      "Library Management System",
-      "Student Information System",
-      "Basic E-commerce Website",
-    ],
-    color: modernColors.success,
-    icon: GraduationCap,
-  },
-];
-
-// Updated certifications data with more items for the carousel
-const certifications = [
-  {
-    id: 1,
-    title: "Certificate of Paper Publication",
-    issuer: "SPRINGER",
-    date: "2024",
-    status: "In Progress",
-    color: modernColors.warning,
-  },
-  {
-    id: 2,
-    title: "Selenium WebDriver with Python",
-    issuer: "SCALAR",
-    date: "2024",
-    status: "Completed",
-    color: modernColors.secondary,
-  },
-  {
-    id: 3,
-    title: "Programming in Java",
-    issuer: "NPTEL",
-    date: "2021",
-    status: "Completed",
-    color: modernColors.accent,
-  },
-];
+} from "lucide-react";
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  educationData,
+  certifications,
+  modernColors,
+  type EducationData,
+  type CertificationData,
+} from "@/data/education";
 
 export default function EducationSection() {
   const [rotation, setRotation] = useState(0);
@@ -227,24 +38,8 @@ export default function EducationSection() {
     <section
       id="education"
       className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative overflow-hidden font-inter"
-      style={{ backgroundColor: modernColors.background }} // Added background color to the section
+      style={{ backgroundColor: modernColors.background }}
     >
-      {/* Removed Suspense block and AnimatedBackground component */}
-      {/*
-      <Suspense
-        fallback={
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-900 to-slate-800" />
-        }
-      >
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(ellipse at top, ${modernColors.primary}, ${modernColors.background})`,
-          }}
-        />
-      </Suspense>
-      */}
-
       <div className="container mx-auto relative z-10 lg:ml-20 xl:ml-28">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -303,6 +98,7 @@ export default function EducationSection() {
                 <Card
                   className="border-2 backdrop-blur-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
                   style={{
+                    backgroundColor: `${modernColors.surface}80`,
                     borderColor: edu.color,
                     boxShadow: `0 20px 60px ${edu.color}20`,
                   }}
@@ -554,6 +350,7 @@ export default function EducationSection() {
                   <Card
                     className="border-2 backdrop-blur-sm transition-all duration-300 h-full flex flex-col justify-center"
                     style={{
+                      backgroundColor: `${modernColors.surface}80`,
                       borderColor: cert.color,
                       boxShadow: `0 0 30px ${cert.color}20`,
                     }}
@@ -622,6 +419,7 @@ export default function EducationSection() {
                 border: `1px solid ${modernColors.muted}40`,
                 color: modernColors.text,
               }}
+              aria-label="Previous certification"
             >
               <ChevronLeft className="w-6 h-6" />
             </motion.button>
@@ -635,6 +433,7 @@ export default function EducationSection() {
                 border: `1px solid ${modernColors.muted}40`,
                 color: modernColors.text,
               }}
+              aria-label="Next certification"
             >
               <ChevronRight className="w-6 h-6" />
             </motion.button>

@@ -1,17 +1,8 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  FC,
-  FormEvent,
-  ChangeEvent,
-  ReactNode,
-  HTMLAttributes,
-} from "react";
+import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import {
-  LucideProps,
   Mail,
   Phone,
   MapPin,
@@ -24,97 +15,22 @@ import {
   MessageSquareText,
   ArrowLeft,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { modernColors } from "@/data/education";
+import AnimatedBackground from "@/components/animated-background";
 
-// Type Definitions for Mock Components
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
-}
-interface CardContentProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
-}
-interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
-  disabled?: boolean;
-  variant?: "default" | "outline" | "ghost"; // Added variant for button styling
-}
-interface InputProps extends HTMLAttributes<HTMLInputElement> {
-  value: string;
-}
-interface TextareaProps extends HTMLAttributes<HTMLTextAreaElement> {
-  value: string;
-}
-
-// Mock Components (Typed for TSX)
-const Card: FC<CardProps> = ({ children, className = "", ...props }) => (
-  <div
-    className={`bg-card text-card-foreground rounded-2xl border ${className}`}
-    {...props}
-  >
-    {children}
-  </div>
-);
-
-const CardContent: FC<CardContentProps> = ({
-  children,
-  className = "",
-  ...props
-}) => (
-  <div className={`p-6 ${className}`} {...props}>
-    {children}
-  </div>
-);
-
-const Button: FC<ButtonProps> = ({
-  children,
-  className = "",
-  variant = "default",
-  ...props
-}) => {
-  const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none px-4 py-2";
-
-  const variantClasses = {
-    default: "text-white shadow-lg hover:opacity-90",
-    outline: "border border-current text-current hover:bg-opacity-10",
-    ghost: "text-current hover:bg-opacity-10",
-  };
-
-  return (
-    <button
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-};
-
-const Input: FC<InputProps> = ({ className = "", ...props }) => (
-  <input
-    suppressHydrationWarning={true}
-    className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-    {...props}
-  />
-);
-
-const Textarea: FC<TextareaProps> = ({ className = "", ...props }) => (
-  <textarea
-    suppressHydrationWarning={true}
-    className={`flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-    {...props}
-  />
-);
-
-// Type definitions for data structures
 interface ContactInfo {
-  icon: React.ElementType<LucideProps>;
+  icon: React.ElementType;
   label: string;
   value: string;
   href: string;
 }
 
 interface SocialLink {
-  icon: React.ElementType<LucideProps>;
+  icon: React.ElementType;
   label: string;
   href: string;
   color: string;
@@ -128,17 +44,7 @@ interface FormDataState {
 
 type FormStatus = "idle" | "sending" | "success" | "error";
 
-const modernColors = {
-  background: "#020617",
-  surface: "#0f172a",
-  primary: "#1e293b",
-  accent: "#38bdf8",
-  secondary: "#818cf8",
-  text: "#e2e8f0",
-  muted: "#94a3b8",
-};
-
-const App: FC = () => {
+export default function ContactSection() {
   const [formData, setFormData] = useState<FormDataState>({
     name: "",
     email: "",
@@ -146,20 +52,37 @@ const App: FC = () => {
   });
   const [formStatus, setFormStatus] = useState<FormStatus>("idle");
   const [showContactForm, setShowContactForm] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  // Fix SSR hydration by ensuring client-side only code runs after hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
+    if (!isClient) return;
+
     if (!(window as any).emailjs) {
       const script = document.createElement("script");
       script.src =
         "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
       script.async = true;
+      script.onload = () => {
+        console.log("EmailJS loaded successfully");
+      };
+      script.onerror = () => {
+        console.error("Failed to load EmailJS");
+        setFormStatus("error");
+      };
       document.body.appendChild(script);
 
       return () => {
-        document.body.removeChild(script);
+        if (document.body.contains(script)) {
+          document.body.removeChild(script);
+        }
       };
     }
-  }, []);
+  }, [isClient]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -249,105 +172,83 @@ const App: FC = () => {
       icon: Linkedin,
       label: "LinkedIn",
       href: process.env.NEXT_PUBLIC_LINKEDIN || "#",
-      color: "#0A66C2", // LinkedIn brand color
+      color: "#0A66C2",
     },
   ];
 
-  const styles = `
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob { animation: blob 7s infinite; }
-        .animation-delay-4000 { animation-delay: -4s; }
-        .backface-hidden {
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden; /* For Safari */
-        }
-    `;
+  // Consistent styles object to prevent hydration mismatch
+  const inputStyles = {
+    backgroundColor: modernColors.primary,
+    borderColor: modernColors.primary,
+    color: modernColors.text,
+  };
 
   return (
-    <>
-      <style>{styles}</style>
-      <section
-        id="contact"
-        className="min-h-screen w-full flex items-center justify-center py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-inter"
-        // Removed style={{ backgroundColor: modernColors.background }}
-      >
-        {/* Removed Background Blobs */}
-        {/*
-        <div
-          className="absolute top-0 -left-4 w-72 h-72 sm:w-96 sm:h-96 rounded-full filter blur-3xl opacity-30 sm:opacity-40 animate-blob"
-          style={{ background: modernColors.secondary }}
-        ></div>
-        <div
-          className="absolute bottom-0 -right-4 w-72 h-72 sm:w-96 sm:h-96 rounded-full filter blur-3xl opacity-30 sm:opacity-40 animate-blob animation-delay-4000"
-          style={{ background: modernColors.accent }}
-        ></div>
-        */}
+    <section
+      id="contact"
+      className="min-h-screen w-full flex items-center justify-center py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-inter"
+    >
+      <AnimatedBackground
+        variant="contact"
+        sectionColor={modernColors.secondary}
+        className="opacity-50"
+        animate={true}
+        blur={2}
+      />
 
-        <div className="container mx-auto relative z-10">
-          {/* Section Title */}
-          <motion.div
-            initial={{ opacity: 0, y: -30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            viewport={{ once: true }}
-            className="text-center mb-12 md:mb-16"
+      <div className="container mx-auto relative z-10 lg:ml-20 xl:ml-28">
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          viewport={{ once: true }}
+          className="text-center mb-12 md:mb-16"
+        >
+          <h2
+            className="text-4xl sm:text-5xl font-bold mb-4"
+            style={{ color: modernColors.text }}
           >
-            <h2
-              className="text-4xl sm:text-5xl font-bold mb-4"
-              style={{ color: modernColors.text }}
-            >
-              Let's{" "}
-              <span
-                style={{
-                  background: `linear-gradient(135deg, ${modernColors.secondary}, ${modernColors.accent})`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                Connect
-              </span>
-            </h2>
-            <div
-              className="w-24 h-1.5 mx-auto mb-6 rounded-full"
+            Let's{" "}
+            <span
               style={{
-                background: `linear-gradient(90deg, ${modernColors.secondary}, ${modernColors.accent})`,
+                background: `linear-gradient(135deg, ${modernColors.secondary}, ${modernColors.accent})`,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
               }}
-            />
-            <p
-              className="text-base sm:text-lg max-w-2xl mx-auto"
-              style={{ color: modernColors.muted }}
             >
-              Have a project in mind or just want to say hi? I'd love to hear
-              from you.
-            </p>
-          </motion.div>
-
-          {/* Flip Card Container */}
-          <Card
-            className="max-w-4xl mx-auto border-2 backdrop-blur-xl overflow-hidden transition-all duration-300 relative min-h-[550px]" // Fixed min-height for all sizes
+              Connect
+            </span>
+          </h2>
+          <div
+            className="w-24 h-1.5 mx-auto mb-6 rounded-full"
             style={{
-              backgroundColor: `${modernColors.surface}BF`,
-              borderColor: modernColors.primary,
-              boxShadow: `0 20px 60px ${modernColors.background}90`,
-              transformStyle: "preserve-3d", // Enable 3D transformations for children
+              background: `linear-gradient(90deg, ${modernColors.secondary}, ${modernColors.accent})`,
             }}
+          />
+          <p
+            className="text-base sm:text-lg max-w-2xl mx-auto"
+            style={{ color: modernColors.muted }}
           >
-            <CardContent className="p-0 h-full">
-              {/* Front Side: Contact Information */}
-              <motion.div
-                className="absolute inset-0 backface-hidden flex flex-col md:flex-row h-full w-full" // Ensure it takes full height and width
-                initial={{ rotateY: 0 }}
-                animate={{ rotateY: showContactForm ? 180 : 0 }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                style={{ transformOrigin: "center center" }}
-              >
+            Have a project in mind or just want to say hi? I'd love to hear from
+            you.
+          </p>
+        </motion.div>
+
+        <Card
+          className="max-w-4xl mx-auto border-2 backdrop-blur-xl overflow-hidden transition-all duration-300 relative min-h-[550px]"
+          style={{
+            backgroundColor: `${modernColors.surface}BF`,
+            borderColor: modernColors.primary,
+            boxShadow: `0 20px 60px ${modernColors.background}90`,
+          }}
+        >
+          <CardContent className="p-0 h-full">
+            {!showContactForm ? (
+              // Contact Information Side
+              <div className="flex flex-col md:flex-row h-full w-full">
                 <div
-                  className="p-6 sm:p-8 md:border-r-2 flex-1 flex flex-col overflow-y-auto" // Added overflow-y-auto
+                  className="p-6 sm:p-8 md:border-r-2 flex-1 flex flex-col overflow-y-auto"
                   style={{ borderColor: modernColors.primary }}
                 >
                   <motion.div
@@ -380,7 +281,7 @@ const App: FC = () => {
                       >
                         <div
                           className="w-12 h-12 rounded-lg flex items-center justify-center mr-4 transition-all duration-300 group-hover:scale-110"
-                          style={{ backgroundColor: `${modernColors.primary}` }}
+                          style={{ backgroundColor: modernColors.primary }}
                         >
                           <info.icon
                             className="w-6 h-6 transition-colors duration-300"
@@ -428,7 +329,6 @@ const App: FC = () => {
                     ))}
                   </div>
 
-                  {/* Button to flip to form */}
                   <div className="mt-auto pt-8">
                     <Button
                       onClick={() => setShowContactForm(true)}
@@ -444,91 +344,71 @@ const App: FC = () => {
                   </div>
                 </div>
 
-                {/* Placeholder for the other half when showing contact info - NOW CLICKABLE */}
                 <div
-                  className="p-6 sm:p-8 flex-1 hidden md:flex items-center justify-center flex-col text-center cursor-pointer transition-colors duration-300 hover:bg-opacity-50" // Added cursor-pointer and hover effect
-                  onClick={() => setShowContactForm(true)} // Added onClick
+                  className="p-6 sm:p-8 flex-1 hidden md:flex items-center justify-center flex-col text-center cursor-pointer transition-colors duration-300 hover:bg-opacity-50"
+                  onClick={() => setShowContactForm(true)}
                   style={{
                     backgroundColor: `${modernColors.primary}40`,
                     color: modernColors.muted,
-                    fontSize: "1.125rem",
-                    lineHeight: "1.75rem",
-                    borderRadius: "0 1rem 1rem 0",
                   }}
                 >
                   <Send
                     className="w-16 h-16 mb-4"
                     style={{ color: modernColors.accent }}
                   />
-                  <p className="max-w-xs">
+                  <p className="max-w-xs text-lg">
                     Ready to start a conversation? Click here to send a message!
                   </p>
                 </div>
-              </motion.div>
-
-              {/* Back Side: Message Form */}
-              <motion.div
-                className="absolute inset-0 backface-hidden flex flex-col md:flex-row h-full w-full" // Ensure it takes full height and width
-                initial={{ rotateY: -180 }} // Start rotated for the back side
-                animate={{ rotateY: showContactForm ? 0 : -180 }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                style={{ transformOrigin: "center center" }}
-              >
-                {/* Placeholder for the other half when showing form - NOW CLICKABLE */}
+              </div>
+            ) : (
+              // Contact Form Side
+              <div className="flex flex-col md:flex-row h-full w-full">
                 <div
-                  className="p-6 sm:p-8 flex-1 hidden md:flex items-center justify-center flex-col text-center cursor-pointer transition-colors duration-300 hover:bg-opacity-50" // Added cursor-pointer and hover effect
-                  onClick={() => setShowContactForm(false)} // Added onClick
+                  className="p-6 sm:p-8 flex-1 hidden md:flex items-center justify-center flex-col text-center cursor-pointer transition-colors duration-300 hover:bg-opacity-50"
+                  onClick={() => setShowContactForm(false)}
                   style={{
                     backgroundColor: `${modernColors.primary}40`,
                     color: modernColors.muted,
-                    fontSize: "1.125rem",
-                    lineHeight: "1.75rem",
-                    borderRadius: "1rem 0 0 1rem",
                   }}
                 >
                   <Mail
                     className="w-16 h-16 mb-4"
                     style={{ color: modernColors.secondary }}
                   />
-                  <p className="max-w-xs">
+                  <p className="max-w-xs text-lg">
                     Want to see my contact info again? Click here to go back!
                   </p>
                 </div>
 
                 <div className="p-6 sm:p-8 flex-1 flex flex-col overflow-y-auto justify-between">
-                  <motion.form
+                  <form
                     onSubmit={handleSubmit}
                     className="space-y-6 flex-1 flex flex-col"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: showContactForm ? 1 : 0 }} // Only animate opacity when visible
-                    transition={{
-                      duration: 0.3,
-                      delay: showContactForm ? 0.4 : 0,
-                    }}
                     noValidate
                   >
-                    <h3
-                      className="text-2xl font-bold mb-2"
-                      style={{ color: modernColors.text }}
-                    >
-                      Send Me a Message
-                    </h3>
-                    <p className="mb-4" style={{ color: modernColors.muted }}>
-                      I'd love to hear from you.
-                    </p>
+                    <div>
+                      <h3
+                        className="text-2xl font-bold mb-2"
+                        style={{ color: modernColors.text }}
+                      >
+                        Send Me a Message
+                      </h3>
+                      <p className="mb-6" style={{ color: modernColors.muted }}>
+                        I'd love to hear from you.
+                      </p>
+                    </div>
+
                     <Input
                       required
                       name="name"
                       placeholder="Your Name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      style={{
-                        backgroundColor: modernColors.primary,
-                        borderColor: modernColors.primary,
-                        color: modernColors.text,
-                      }}
+                      style={inputStyles}
                       className="focus:border-sky-400 focus:ring-sky-400"
                     />
+
                     <Input
                       required
                       name="email"
@@ -536,13 +416,10 @@ const App: FC = () => {
                       placeholder="Your Email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      style={{
-                        backgroundColor: modernColors.primary,
-                        borderColor: modernColors.primary,
-                        color: modernColors.text,
-                      }}
+                      style={inputStyles}
                       className="focus:border-sky-400 focus:ring-sky-400"
                     />
+
                     <Textarea
                       required
                       name="message"
@@ -550,11 +427,7 @@ const App: FC = () => {
                       rows={5}
                       value={formData.message}
                       onChange={handleInputChange}
-                      style={{
-                        backgroundColor: modernColors.primary,
-                        borderColor: modernColors.primary,
-                        color: modernColors.text,
-                      }}
+                      style={inputStyles}
                       className="focus:border-sky-400 focus:ring-sky-400 resize-none"
                     />
 
@@ -585,6 +458,7 @@ const App: FC = () => {
                       {formStatus === "success" && "Message Sent!"}
                       {formStatus === "error" && "Please fill all fields"}
                     </Button>
+
                     <Button
                       type="button"
                       variant="ghost"
@@ -595,15 +469,13 @@ const App: FC = () => {
                       <ArrowLeft className="w-5 h-5 mr-2" />
                       Back to Contact Info
                     </Button>
-                  </motion.form>
+                  </form>
                 </div>
-              </motion.div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-    </>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </section>
   );
-};
-
-export default App;
+}

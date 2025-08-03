@@ -1,77 +1,13 @@
+"use client";
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin } from "lucide-react"; // Assuming usage of lucide-react for icons
-
-// --- Placeholder Components & Types ---
-// These are mockups of components/variables you likely have in your project.
-// Replace them with your actual imports.
-
-const modernColors = {
-  primary: "#3b82f6",
-  secondary: "#8b5cf6",
-  accent: "#ec4899",
-  text: "#e5e7eb",
-  muted: "#9ca3af",
-  surface: "#1f2937",
-  background: "#111827",
-  success: "#22c55e",
-};
-
-// A simple placeholder for your AnimatedBackground component
-const AnimatedBackground = ({
-  sectionColor,
-  variant,
-}: {
-  sectionColor: string;
-  variant: string;
-}) => (
-  <div
-    style={{
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: `radial-gradient(circle, ${sectionColor}33 0%, transparent 70%)`,
-      zIndex: 0,
-    }}
-    data-variant={variant}
-  />
-);
-
-// Simple placeholders for your Card components
-const Card = ({
-  children,
-  className,
-  style,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) => (
-  <div className={className} style={style}>
-    {children}
-  </div>
-);
-
-const CardContent = ({
-  children,
-  className,
-  style,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) => (
-  <div className={className} style={style}>
-    {children}
-  </div>
-);
-
-// --- Main Component ---
+import { MapPin } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { modernColors } from "@/data/education";
 
 interface AboutSectionProps {
-  // You can pass props here if needed, e.g., for colors or content
+  // You can pass props here if needed
 }
 
 const AboutSection: React.FC<AboutSectionProps> = () => {
@@ -79,21 +15,16 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
 
   const aboutParagraphs = [
     "I hold a Master of Computer Applications (MCA) from PES University, Bangalore, where I graduated with a 7.79/10.0 GPA and received distinction awards for academic excellence. My curriculum provided a robust grounding in algorithms, data structures, and software engineering principles, and instilled in me a deep appreciation for continual learning and innovation.",
-    "My skill set encompasses full‑stack web development, machine learning, and cloud computing. I’ve designed and delivered end‑to‑end solutions using Python, React, Angular, and AWS, among other technologies. In addition, I’ve contributed to published research in sports analytics—applying predictive modeling to optimize player selection—which underscores my commitment to data‑driven decision‑making.",
-    "Beyond code, I’m an avid gamer and sci‑fi enthusiast—interests that fuel my creativity and problem‑solving mindset. I thrive on translating complex challenges into intuitive digital experiences, and I approach every freelance engagement with curiosity, clear communication, and a dedication to delivering tangible value.",
+    "My skill set encompasses full‑stack web development, machine learning, and cloud computing. I've designed and delivered end‑to‑end solutions using Python, React, Angular, and AWS, among other technologies. In addition, I've contributed to published research in sports analytics—applying predictive modeling to optimize player selection—which underscores my commitment to data‑driven decision‑making.",
+    "Beyond code, I'm an avid gamer and sci‑fi enthusiast—interests that fuel my creativity and problem‑solving mindset. I thrive on translating complex challenges into intuitive digital experiences, and I approach every freelance engagement with curiosity, clear communication, and a dedication to delivering tangible value.",
   ];
 
   return (
     <section
       id="about"
       className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative overflow-hidden"
-      style={{ background: modernColors.background }} // Added a base background for context
+      style={{ background: modernColors.background }}
     >
-      <AnimatedBackground
-        sectionColor={modernColors.secondary}
-        variant="about"
-      />
-
       <div className="container mx-auto relative z-10 lg:ml-20 xl:ml-28">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -139,7 +70,7 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
                 key={index}
                 className="text-base sm:text-lg leading-relaxed text-justify"
                 onViewportEnter={() => setActiveIndex(index)}
-                viewport={{ once: false, amount: 0.8 }} // Trigger when 80% is visible
+                viewport={{ once: false, amount: 0.8 }}
                 animate={{
                   color:
                     activeIndex === index

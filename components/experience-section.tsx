@@ -1,186 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import React, { lazy, Suspense, FC, ReactNode, HTMLAttributes } from "react";
-import {
-  Briefcase,
-  Building,
-  Calendar,
-  MapPin,
-  Cpu,
-  Code,
-  Users,
-  LucideProps,
-} from "lucide-react";
-
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
-}
-interface CardContentProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
-}
-interface AnimatedBackgroundProps {
-  sectionColor: string;
-  variant?: "about" | "other";
-}
-
-const Card: FC<CardProps> = ({ children, className = "", style, ...props }) => (
-  <div
-    className={`${className} rounded-lg border bg-card text-card-foreground shadow-sm`}
-    style={style}
-    {...props}
-  >
-    {children}
-  </div>
-);
-
-const CardContent: FC<CardContentProps> = ({
-  children,
-  className = "",
-  ...props
-}) => (
-  <div className={`${className} p-6`} {...props}>
-    {children}
-  </div>
-);
-
-// Mock AnimatedBackground component, assuming it handles its own internal styles
-const AnimatedBackground: FC<AnimatedBackgroundProps> = ({
-  sectionColor,
-  variant,
-}) => {
-  const styles = `
-    @keyframes moveGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .animate-gradient {
-      background-size: 400% 400%;
-      animation: moveGradient 15s ease infinite;
-    }
-    @keyframes blob {
-      0% { transform: translate(0px, 0px) scale(1); }
-      33% { transform: translate(30px, -50px) scale(1.1); }
-      66% { transform: translate(-20px, 20px) scale(0.9); }
-      100% { transform: translate(0px, 0px) scale(1); }
-    }
-    .animate-blob { animation: blob 7s infinite; }
-    .animation-delay-2000 { animation-delay: -2s; }
-    .animation-delay-4000 { animation-delay: -4s; }
-  `;
-
-  return (
-    <>
-      <style>{styles}</style>
-      <div
-        className="absolute inset-0 w-full h-full opacity-30 z-0 animate-gradient"
-        style={{
-          background: `linear-gradient(45deg, ${sectionColor}20, ${sectionColor}40, ${sectionColor}20)`,
-        }}
-      ></div>
-      {/* Specific blob animations for 'about' variant, or general if not specified */}
-      {variant === "about" && (
-        <>
-          <div
-            className="absolute top-1/4 left-1/4 w-48 h-48 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"
-            style={{ backgroundColor: sectionColor }}
-          ></div>
-          <div
-            className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"
-            style={{ backgroundColor: sectionColor }}
-          ></div>
-        </>
-      )}
-    </>
-  );
-};
-
-const modernColors = {
-  background: "#020617", // Dark blue-gray, consistent with previous sections
-  surface: "#0f172a",
-  primary: "#1e293b",
-  accent: "#38bdf8",
-  secondary: "#818cf8",
-  success: "#4ade80", // Green for GPA and some experience highlights
-  warning: "#F59E0B",
-  danger: "#EF4444",
-  text: "#E2E8F0",
-  muted: "#94a3b8",
-};
-
-const experienceData = [
-  {
-    id: 1,
-    title: "Software Engineer",
-    company: "Confendential",
-    location: "Bengaluru, India (Remote)",
-    duration: "Dec 2024 - Present",
-    description:
-      "Trained and worked on enterprise applications using .NET Core, Angular, and Microsoft SQL Server. Key contributions included designing RESTful APIs in C#, building responsive UIs with Angular and RxJS, developing complex T‑SQL stored procedures, and integrating authentication and role‑based security within Agile sprints.",
-    technologies: [
-      ".NET Core",
-      "Angular",
-      "RxJS",
-      "C#",
-      "MS SQL Server",
-      "T-SQL",
-      "Agile",
-    ],
-    color: modernColors.accent,
-    icon: Code,
-  },
-  {
-    id: 2,
-    title: "Remote AI Model Training Expert",
-    company: "Outlier.ai",
-    location: "Remote",
-    duration: "Oct 2024 - Dec 2024",
-    description:
-      "Collaborated remotely with an AI solutions provider to enhance model performance and accuracy. Responsibilities included curating and labeling datasets, designing evaluation criteria, conducting systematic error analysis, and providing actionable feedback to data scientists to refine training pipelines.",
-    technologies: [
-      "AI/ML",
-      "Data Curation",
-      "Data Labeling",
-      "Error Analysis",
-      "Python",
-      "Feedback Loop",
-    ],
-    color: modernColors.secondary,
-    icon: Cpu,
-  },
-  {
-    id: 3,
-    title: "Freelance Full-Stack Developer",
-    company: "Self-Employed",
-    location: "Remote",
-    duration: "Jan 2025 - Present",
-    description:
-      "Partnered with diverse clients to architect and deliver custom web solutions—ranging from e‑commerce platforms to interactive dashboards—using React or Angular on the front end, Node.js/Express with MySQL on the back end, and AWS (S3, CloudFront) for secure asset delivery. Implemented JWT‑based authentication, optimized image pipelines via presigned URLs, and maintained clear documentation and on‑time delivery.",
-    technologies: [
-      "React",
-      "Angular",
-      "Node.js",
-      "Express",
-      "MySQL",
-      "AWS S3",
-      "JWT",
-      "Full-Stack",
-    ],
-    color: modernColors.success,
-    icon: Users,
-  },
-];
+import React from "react";
+import { Briefcase, Building, Calendar, MapPin } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { experienceData } from "@/data/experience";
+import { modernColors } from "@/data/education";
 
 export default function ExperienceSection() {
   return (
     <section
       id="experience"
       className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative overflow-hidden font-inter"
+      style={{ backgroundColor: modernColors.background }}
     >
-      {/* Removed Suspense block with AnimatedBackground and its fallback */}
-      {/* Removed the AnimatedBackground component import and usage */}
-
       <div className="container mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -224,7 +57,7 @@ export default function ExperienceSection() {
         <div className="relative max-w-4xl mx-auto">
           {/* Vertical line */}
           <div
-            className="absolute left-4 sm:left-1/2 top-0 h-full w-0.5 transform sm:-translate-x-1/2" // Added transform for precise centering on desktop
+            className="absolute left-4 sm:left-1/2 top-0 h-full w-0.5 transform sm:-translate-x-1/2"
             style={{
               background: `linear-gradient(to bottom, ${modernColors.surface}, ${modernColors.success}, ${modernColors.surface})`,
             }}
@@ -233,7 +66,7 @@ export default function ExperienceSection() {
           {experienceData.map((exp, index) => (
             <motion.div
               key={exp.id}
-              className="mb-12 flex items-center w-full relative" // Added relative for absolute positioning of dot
+              className="mb-12 flex items-center w-full relative"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
@@ -242,10 +75,9 @@ export default function ExperienceSection() {
               {/* Timeline Dot */}
               <div
                 className={`absolute z-10 flex items-center justify-center w-8 h-8 rounded-full -translate-y-1/2 ${
-                  // Added -translate-y-1/2 for vertical centering
                   index % 2 === 0
-                    ? "left-0 sm:left-1/2 -translate-x-1/2" // Left edge for mobile, center for desktop
-                    : "left-0 sm:left-1/2 -translate-x-1/2" // Same for both, will be adjusted by card positioning
+                    ? "left-0 sm:left-1/2 -translate-x-1/2"
+                    : "left-0 sm:left-1/2 -translate-x-1/2"
                 }`}
                 style={{
                   backgroundColor: exp.color,
@@ -258,9 +90,9 @@ export default function ExperienceSection() {
               <div
                 className={`w-full sm:w-5/12 ${
                   index % 2 === 0
-                    ? "ml-auto pr-0 sm:pr-8 sm:pl-0" // Push to right on desktop, add padding-right
-                    : "mr-auto pl-0 sm:pl-8 sm:pr-0" // Push to left on desktop, add padding-left
-                } pl-12 sm:pl-0`} // Add padding-left for mobile to clear dot
+                    ? "ml-auto pr-0 sm:pr-8 sm:pl-0"
+                    : "mr-auto pl-0 sm:pl-8 sm:pr-0"
+                } pl-12 sm:pl-0`}
               >
                 <motion.div
                   whileHover={{ y: -5, transition: { duration: 0.2 } }}
