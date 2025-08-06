@@ -26,7 +26,8 @@ interface AnimatedBackgroundProps {
     | "experience"
     | "contact"
     | "education"
-    | "research";
+    | "research"
+    | "services";
   className?: string;
   animate?: boolean;
   blur?: number;
@@ -62,16 +63,58 @@ export default function AnimatedBackground({
   }, []);
 
   const variantElements = useMemo(() => {
-    // Use deterministic positions for initial render to prevent hydration mismatch
     const getDeterministicPosition = (index: number, base: number = 25) => {
       return base + ((index * 15) % 70);
     };
 
     switch (variant) {
+      case "services":
+        return (
+          <>
+            {/* Service-related floating elements */}
+            {[...Array(6)].map((_, i) => {
+              const serviceIcons = ["⚡", "🔧", "🎯", "💡", "🚀", "⭐"];
+              const icon = serviceIcons[i % serviceIcons.length];
+              return (
+                <motion.div
+                  key={`service-${i}`}
+                  className="absolute text-2xl opacity-10 will-change-transform"
+                  style={{
+                    color: sectionColor,
+                    left: `${getDeterministicPosition(i, 15)}%`,
+                    top: `${getDeterministicPosition(i, 20)}%`,
+                  }}
+                  animate={
+                    isClient
+                      ? {
+                          y: [0, -40, 0],
+                          rotate: [0, 10, -10, 0],
+                          opacity: [0.1, 0.3, 0.1],
+                          left: `${Math.random() * 100}%`,
+                          top: `${Math.random() * 100}%`,
+                        }
+                      : {
+                          y: [0, -40, 0],
+                          rotate: [0, 10, -10, 0],
+                          opacity: [0.1, 0.3, 0.1],
+                        }
+                  }
+                  transition={{
+                    duration: 4 + (i % 3),
+                    repeat: Number.POSITIVE_INFINITY,
+                    delay: (i % 3) * 0.7,
+                  }}
+                >
+                  {icon}
+                </motion.div>
+              );
+            })}
+          </>
+        );
+
       case "home":
         return (
           <>
-            {/* Reduced number of floating orbs for better performance */}
             {[...Array(4)].map((_, i) => (
               <motion.div
                 key={`orb-${i}`}
@@ -105,97 +148,9 @@ export default function AnimatedBackground({
           </>
         );
 
-      case "projects":
-        return (
-          <>
-            {/* Reduced geometric shapes */}
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={`geo-${i}`}
-                className="absolute opacity-10 will-change-transform"
-                style={{
-                  left: `${getDeterministicPosition(i, 30)}%`,
-                  top: `${getDeterministicPosition(i, 40)}%`,
-                }}
-                animate={
-                  isClient
-                    ? {
-                        rotate: [0, 360],
-                        scale: [1, 1.2, 1],
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                      }
-                    : {
-                        rotate: [0, 360],
-                        scale: [1, 1.2, 1],
-                      }
-                }
-                transition={{
-                  duration: 12 + i * 3,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "linear",
-                  delay: i * 1,
-                }}
-              >
-                <svg width="60" height="60" viewBox="0 0 60 60">
-                  <polygon
-                    points="30,5 55,20 55,40 30,55 5,40 5,20"
-                    fill="none"
-                    stroke={sectionColor}
-                    strokeWidth="1"
-                  />
-                </svg>
-              </motion.div>
-            ))}
-          </>
-        );
-
-      case "skills":
-        return (
-          <>
-            {/* Reduced code particles */}
-            {[...Array(10)].map((_, i) => {
-              const symbols = ["</>", "{}", "[]", "()"];
-              const symbol = symbols[i % symbols.length];
-              return (
-                <motion.div
-                  key={`code-${i}`}
-                  className="absolute text-xs font-mono opacity-20 will-change-transform"
-                  style={{
-                    color: sectionColor,
-                    left: `${getDeterministicPosition(i, 10)}%`,
-                    top: `${getDeterministicPosition(i, 20)}%`,
-                  }}
-                  animate={
-                    isClient
-                      ? {
-                          y: [0, -30, 0],
-                          opacity: [0.2, 0.4, 0.2],
-                          left: `${Math.random() * 100}%`,
-                          top: `${Math.random() * 100}%`,
-                        }
-                      : {
-                          y: [0, -30, 0],
-                          opacity: [0.2, 0.4, 0.2],
-                        }
-                  }
-                  transition={{
-                    duration: 2 + (i % 3),
-                    repeat: Number.POSITIVE_INFINITY,
-                    delay: (i % 2) * 0.5,
-                  }}
-                >
-                  {symbol}
-                </motion.div>
-              );
-            })}
-          </>
-        );
-
       default:
         return (
           <>
-            {/* Reduced default particles */}
             {[...Array(8)].map((_, i) => (
               <motion.div
                 key={`particle-${i}`}
@@ -240,7 +195,7 @@ export default function AnimatedBackground({
         }}
       />
 
-      {/* Optimized Mouse Follow Effect */}
+      {/* Mouse Follow Effect */}
       <motion.div
         className="absolute w-96 h-96 rounded-full blur-3xl opacity-10 will-change-transform"
         style={{
@@ -256,7 +211,7 @@ export default function AnimatedBackground({
       {/* Variant-specific Elements */}
       {variantElements}
 
-      {/* Simplified Grid Pattern */}
+      {/* Grid Pattern */}
       <div
         className="absolute inset-0 opacity-5"
         style={{

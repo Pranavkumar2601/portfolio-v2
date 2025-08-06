@@ -152,7 +152,7 @@ export default function RealProjectsSection() {
             <span className="text-sm font-medium">Featured Work</span>
           </motion.div>
 
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black mb-6 sm:mb-8 leading-tight">
+          <h2 className="text-4xl sm:text-4xl lg:text-5xl xl:text-6xl font-black mb-6 sm:mb-8 leading-tight">
             <span style={{ color: modernColors.text }}>Real-World</span>
             <br />
             <span

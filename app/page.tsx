@@ -9,6 +9,7 @@ import ExperienceSection from "@/components/experience-section";
 import ContactSection from "@/components/contact-section";
 import AboutSection from "@/components/AboutSection";
 import SkillsSection from "@/components/skills-section";
+import Services from "@/components/Services";
 import { motion } from "framer-motion";
 import {
   ArrowDown,
@@ -154,7 +155,7 @@ export default function Portfolio() {
                   className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium"
                   style={{ color: modernColors.muted }}
                 >
-                  MCA Graduate & Software Engineer
+                  Software Engineer & FreeLancer
                 </h2>
                 <div
                   className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4 lg:space-x-6 text-sm sm:text-base lg:text-lg"
@@ -175,13 +176,9 @@ export default function Portfolio() {
                   className="text-base sm:text-lg md:text-xl lg:text-2xl max-w-4xl mx-auto leading-relaxed px-4 sm:px-0"
                   style={{ color: modernColors.muted }}
                 >
-                  With a strong foundation in computer science and a Master's
-                  degree from PES University, I am now working as a software
-                  engineer. My interests include machine learning, full-stack
-                  development, and leveraging technology to create meaningful,
-                  user-centric solutions. I am driven by a passion for
-                  continuous learning and innovation, with a clear goal to build
-                  impactful products that solve real-world problems.
+                  I am driven by a passion for continuous learning and
+                  innovation, with a clear goal to build impactful products that
+                  solve real-world problems.
                 </p>
               </div>
             </motion.div>
@@ -290,6 +287,7 @@ export default function Portfolio() {
         {/* All Other Sections - Now Clean and Organized */}
         <AboutSection />
         <SkillsSection />
+        <Services />
         <EducationSection />
         <ExperienceSection />
         <RealProjectsSection />

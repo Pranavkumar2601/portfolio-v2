@@ -14,8 +14,7 @@ import {
   Mail,
   Code,
   ChevronRight,
-  Phone,
-  MapPin,
+  Settings, // Services icon
 } from "lucide-react";
 
 const modernColors = {
@@ -31,10 +30,12 @@ const modernColors = {
   muted: "#64748B",
 };
 
+// Updated navigation items with Services
 const navigationItems = [
   { id: "home", label: "Home", icon: Home },
   { id: "about", label: "About", icon: User },
   { id: "skills", label: "Skills", icon: Code },
+  { id: "services", label: "Services", icon: Settings },
   { id: "education", label: "Education", icon: GraduationCap },
   { id: "experience", label: "Experience", icon: Briefcase },
   { id: "projects", label: "Projects", icon: FolderOpen },
@@ -68,19 +69,60 @@ export default function EnhancedSmoothDualTrackNavigation() {
       const progress = (scrollY / docHeight) * 100;
       setScrollProgress(Math.min(100, Math.max(0, progress)));
 
-      // Enhanced section detection with better threshold
-      const sections = navigationItems.map((item) =>
-        document.getElementById(item.id)
-      );
-      const scrollPosition = scrollY + window.innerHeight / 2;
+      // Fixed section detection algorithm
+      const sections = navigationItems
+        .map((item) => {
+          const element = document.getElementById(item.id);
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            const elementTop = window.scrollY + rect.top;
+            const elementBottom = elementTop + rect.height;
 
+            return {
+              id: item.id,
+              element,
+              top: elementTop,
+              bottom: elementBottom,
+              height: rect.height,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
+
+      if (sections.length === 0) return;
+
+      // Use a smaller offset for better detection
+      const scrollOffset = scrollY + window.innerHeight * 0.3; // Use 30% of viewport
       let currentSection = "home";
 
-      // Enhanced section detection for all sections including contact
-      for (let i = sections.length - 1; i >= 0; i--) {
+      // Find which section we're currently in
+      for (let i = 0; i < sections.length; i++) {
         const section = sections[i];
-        if (section && section.offsetTop <= scrollPosition) {
-          currentSection = navigationItems[i].id;
+        if (!section) continue;
+
+        const { id, top, bottom } = section;
+
+        // Check if we're within this section's boundaries
+        if (scrollOffset >= top && scrollOffset < bottom) {
+          currentSection = id;
+          break;
+        }
+
+        // Handle the last section specially
+        if (i === sections.length - 1 && scrollOffset >= top) {
+          currentSection = id;
+          break;
+        }
+
+        // Handle case where we're between sections
+        const nextSection = sections[i + 1];
+        if (
+          nextSection &&
+          scrollOffset >= top &&
+          scrollOffset < nextSection.top
+        ) {
+          currentSection = id;
           break;
         }
       }
@@ -88,23 +130,34 @@ export default function EnhancedSmoothDualTrackNavigation() {
       setActiveSection(currentSection);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    // Add a small delay to allow for smooth scrolling
+    const debouncedHandleScroll = () => {
+      setTimeout(handleScroll, 50);
+    };
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", debouncedHandleScroll, { passive: true });
+    handleScroll(); // Initial call
+
+    return () => window.removeEventListener("scroll", debouncedHandleScroll);
   }, [isClient]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const headerOffset = window.innerWidth < 1024 ? 60 : 80; // Smaller offset for mobile
-      const elementPosition = element.offsetTop;
+      const headerOffset = window.innerWidth < 1024 ? 80 : 100;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.scrollY;
       const offsetPosition = elementPosition - headerOffset;
 
       window.scrollTo({
         top: Math.max(0, offsetPosition),
         behavior: "smooth",
       });
+
+      // Force update active section after scrolling
+      setTimeout(() => {
+        setActiveSection(sectionId);
+      }, 100);
     }
     setIsMenuOpen(false);
   };
@@ -113,9 +166,10 @@ export default function EnhancedSmoothDualTrackNavigation() {
 
   return (
     <>
-      {/* Enhanced Desktop Sidebar Navigation */}
+      {/* Desktop Navigation - Fixed positioning to prevent cutoff */}
       <motion.nav
-        className="fixed top-[30%] left-4 transform -translate-y-1/2 z-50 hidden lg:block"
+        className="fixed top-[20%] left-4 z-50 hidden lg:block" // Moved higher up to prevent cutoff
+        style={{ maxHeight: "calc(100vh - 200px)" }} // Ensure it fits in viewport
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
@@ -123,7 +177,7 @@ export default function EnhancedSmoothDualTrackNavigation() {
         <motion.div
           className="relative overflow-hidden rounded-3xl backdrop-blur-xl border"
           style={{
-            backgroundColor: `${modernColors.surface}85`,
+            backgroundColor: `${modernColors.surface}90`,
             borderColor: `${modernColors.primary}50`,
             boxShadow: `0 20px 60px ${modernColors.background}80, 0 0 0 1px ${modernColors.accent}20`,
           }}
@@ -138,7 +192,8 @@ export default function EnhancedSmoothDualTrackNavigation() {
             }}
           />
 
-          <div className="relative p-2 space-y-1 max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+          {/* Vertical navigation layout with better spacing */}
+          <div className="relative p-2 space-y-1 max-h-[calc(80vh)] overflow-y-auto custom-scrollbar">
             {navigationItems.map((item, index) => {
               const Icon = item.icon;
               const isActive = activeSection === item.id;
@@ -150,15 +205,17 @@ export default function EnhancedSmoothDualTrackNavigation() {
                   onClick={() => scrollToSection(item.id)}
                   onMouseEnter={() => setHoveredItem(item.id)}
                   onMouseLeave={() => setHoveredItem(null)}
-                  className="relative group w-full flex items-center justify-center p-4 rounded-2xl transition-all duration-300 overflow-hidden"
+                  className="relative group w-full flex items-center justify-center p-3 rounded-2xl transition-all duration-300 overflow-hidden"
                   style={{
                     color: isActive
                       ? modernColors.background
                       : modernColors.text,
+                    minWidth: "52px",
+                    minHeight: "52px",
                   }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.05 }}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -183,13 +240,13 @@ export default function EnhancedSmoothDualTrackNavigation() {
                     )}
                   </AnimatePresence>
 
-                  <Icon className="w-6 h-6 relative z-10" />
+                  <Icon className="w-5 h-5 relative z-10" />
 
                   {/* Enhanced Tooltip */}
                   <AnimatePresence>
                     {isHovered && (
                       <motion.div
-                        className="absolute left-full ml-6 px-4 py-3 rounded-xl whitespace-nowrap pointer-events-none overflow-hidden"
+                        className="absolute left-full ml-4 px-4 py-3 rounded-xl whitespace-nowrap pointer-events-none overflow-hidden"
                         style={{
                           backgroundColor: `${modernColors.surface}95`,
                           color: modernColors.text,
@@ -202,7 +259,7 @@ export default function EnhancedSmoothDualTrackNavigation() {
                         transition={{ duration: 0.2 }}
                       >
                         <div
-                          className="absolute inset-0 bg-gradient-to-r opacity-10"
+                          className="absolute inset-0 bg-gradient-to-r opacity-10 rounded-xl"
                           style={{
                             background: `linear-gradient(90deg, ${modernColors.accent}, ${modernColors.secondary})`,
                           }}
@@ -220,7 +277,7 @@ export default function EnhancedSmoothDualTrackNavigation() {
                   {/* Active indicator dot */}
                   {isActive && (
                     <motion.div
-                      className="absolute -right-1 w-1 h-8 rounded-full"
+                      className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1 h-8 rounded-full"
                       style={{ backgroundColor: modernColors.accent }}
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -234,7 +291,7 @@ export default function EnhancedSmoothDualTrackNavigation() {
         </motion.div>
       </motion.nav>
 
-      {/* Compact Mobile Header */}
+      {/* Mobile Header */}
       <motion.header
         className="fixed top-0 left-0 right-0 z-50 lg:hidden"
         initial={{ opacity: 0, y: -20 }}
@@ -255,7 +312,6 @@ export default function EnhancedSmoothDualTrackNavigation() {
               : "none",
           }}
         >
-          {/* Animated background gradient */}
           <motion.div
             className="absolute inset-0 opacity-10"
             style={{
@@ -271,7 +327,7 @@ export default function EnhancedSmoothDualTrackNavigation() {
             }}
           />
 
-          <div className="relative flex items-center justify-between px-4 py-2">
+          <div className="relative flex items-center justify-between px-4 py-3">
             <motion.div
               className="flex items-center space-x-2"
               whileHover={{ scale: 1.05 }}
@@ -372,7 +428,6 @@ export default function EnhancedSmoothDualTrackNavigation() {
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
-              {/* Menu background gradient */}
               <div
                 className="absolute inset-0 opacity-5"
                 style={{
@@ -381,7 +436,6 @@ export default function EnhancedSmoothDualTrackNavigation() {
               />
 
               <div className="relative h-full overflow-y-auto">
-                {/* Header */}
                 <div
                   className="px-6 py-6 border-b"
                   style={{ borderColor: `${modernColors.primary}30` }}
@@ -401,8 +455,7 @@ export default function EnhancedSmoothDualTrackNavigation() {
                   </motion.h2>
                 </div>
 
-                {/* Menu Items */}
-                <div className="px-4 py-6 space-y-2">
+                <div className="px-4 py-4 space-y-1">
                   {navigationItems.map((item, index) => {
                     const Icon = item.icon;
                     const isActive = activeSection === item.id;
@@ -411,7 +464,7 @@ export default function EnhancedSmoothDualTrackNavigation() {
                       <motion.button
                         key={item.id}
                         onClick={() => scrollToSection(item.id)}
-                        className="w-full group relative overflow-hidden flex items-center space-x-4 p-4 text-left rounded-2xl transition-all duration-300"
+                        className="w-full group relative overflow-hidden flex items-center space-x-4 p-3 text-left rounded-2xl transition-all duration-300"
                         style={{
                           color: isActive
                             ? modernColors.accent
@@ -420,7 +473,7 @@ export default function EnhancedSmoothDualTrackNavigation() {
                         initial={{ opacity: 0, x: 50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{
-                          delay: index * 0.05 + 0.1,
+                          delay: index * 0.04 + 0.1,
                           duration: 0.3,
                         }}
                         whileHover={{
@@ -429,7 +482,6 @@ export default function EnhancedSmoothDualTrackNavigation() {
                         }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        {/* Background */}
                         <motion.div
                           className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100"
                           style={{
@@ -438,7 +490,6 @@ export default function EnhancedSmoothDualTrackNavigation() {
                           transition={{ duration: 0.3 }}
                         />
 
-                        {/* Active indicator */}
                         {isActive && (
                           <motion.div
                             className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 rounded-full"
@@ -460,11 +511,11 @@ export default function EnhancedSmoothDualTrackNavigation() {
                             backgroundColor: `${modernColors.accent}10`,
                           }}
                         >
-                          <Icon className="w-6 h-6" />
+                          <Icon className="w-5 h-5" />
                         </motion.div>
 
                         <div className="relative z-10 flex-1">
-                          <span className="text-lg font-semibold">
+                          <span className="text-base font-semibold">
                             {item.label}
                           </span>
                         </div>
@@ -483,15 +534,14 @@ export default function EnhancedSmoothDualTrackNavigation() {
                   })}
                 </div>
 
-                {/* Spacer to prevent content from being hidden behind mobile navigation */}
-                <div className="h-16" />
+                <div className="h-8" />
               </div>
             </motion.nav>
           </>
         )}
       </AnimatePresence>
 
-      {/* Enhanced Scroll Progress Indicator */}
+      {/* Scroll Progress Indicator */}
       <motion.div
         className="fixed bottom-6 right-6 z-50 hidden sm:block"
         initial={{ opacity: 0, scale: 0.8 }}
@@ -508,7 +558,6 @@ export default function EnhancedSmoothDualTrackNavigation() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          {/* Background circle */}
           <div
             className="absolute inset-0 rounded-full backdrop-blur-xl border"
             style={{
@@ -518,7 +567,6 @@ export default function EnhancedSmoothDualTrackNavigation() {
             }}
           />
 
-          {/* Progress ring */}
           <svg
             className="w-16 h-16 transform -rotate-90 absolute inset-0"
             viewBox="0 0 36 36"
@@ -544,7 +592,6 @@ export default function EnhancedSmoothDualTrackNavigation() {
             />
           </svg>
 
-          {/* Center icon */}
           <div className="absolute inset-0 flex items-center justify-center">
             <Home className="w-5 h-5" style={{ color: modernColors.accent }} />
           </div>
