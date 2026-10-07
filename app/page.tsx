@@ -9,7 +9,7 @@ import ExperienceSection from "@/components/experience-section";
 import ContactSection from "@/components/contact-section";
 import AboutSection from "@/components/AboutSection";
 import SkillsSection from "@/components/skills-section";
-import Services from "@/components/Services";
+// import Services from "@/components/Services";
 import { motion } from "framer-motion";
 import {
   ArrowDown,
@@ -287,7 +287,7 @@ export default function Portfolio() {
         {/* All Other Sections - Now Clean and Organized */}
         <AboutSection />
         <SkillsSection />
-        <Services />
+        {/* <Services /> */}
         <EducationSection />
         <ExperienceSection />
         <RealProjectsSection />
