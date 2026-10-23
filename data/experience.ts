@@ -18,7 +18,7 @@ export const experienceData: ExperienceData[] = [
     id: 1,
     title: "Software Engineer",
     company: "LTM",
-    location: "Bengaluru, India (Remote)",
+    location: "Bengaluru, India",
     duration: "Dec 2024 - Oct 2026",
     description: `• Contributed to the development and maintenance of enterprise-scale healthcare software for a global medical technology client, with a focus on application reliability and system quality.
 
