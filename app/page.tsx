@@ -9,7 +9,6 @@ import ExperienceSection from "@/components/experience-section";
 import ContactSection from "@/components/contact-section";
 import AboutSection from "@/components/AboutSection";
 import SkillsSection from "@/components/skills-section";
-// import Services from "@/components/Services";
 import { motion } from "framer-motion";
 import {
   ArrowDown,
@@ -20,10 +19,23 @@ import {
   MapPin,
   Calendar,
   Phone,
+  FolderGit2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { modernColors } from "@/data/education";
+
+const TECH_STRIP = [
+  "C#",
+  ".NET Core",
+  "Python",
+  "FastAPI",
+  "SQL",
+  "PostgreSQL",
+  "Docker",
+  "AWS",
+  "Machine Learning",
+];
 
 export default function Portfolio() {
   const handleDownloadResume = () => {
@@ -45,7 +57,7 @@ export default function Portfolio() {
     window.open(
       process.env.NEXT_PUBLIC_LINKEDIN,
       "_blank",
-      "noopener,noreferrer"
+      "noopener,noreferrer",
     );
   };
 
@@ -53,8 +65,12 @@ export default function Portfolio() {
     window.open(
       process.env.NEXT_PUBLIC_GITHUB,
       "_blank",
-      "noopener,noreferrer"
+      "noopener,noreferrer",
     );
+  };
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -132,8 +148,7 @@ export default function Portfolio() {
               transition={{ duration: 0.6 }}
               className="space-y-4 sm:space-y-6"
             >
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6">
-                <span style={{ color: modernColors.text }}>Hi, I'm </span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-2 sm:mb-4">
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -144,19 +159,27 @@ export default function Portfolio() {
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
                   }}
-                  className="block sm:inline"
                 >
                   {process.env.NEXT_PUBLIC_OWNER_NAME || "Pranav Kumar"}
                 </motion.span>
               </h1>
 
               <div className="space-y-3 sm:space-y-4">
-                <h2
-                  className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium"
+                <p
+                  className="text-lg sm:text-xl md:text-2xl font-medium"
                   style={{ color: modernColors.muted }}
                 >
-                  Software Engineer & FreeLancer
+                  Software Engineer
+                </p>
+
+                <h2
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold max-w-5xl mx-auto leading-tight px-4 sm:px-0"
+                  style={{ color: modernColors.text }}
+                >
+                  I build reliable software, from enterprise systems to
+                  intelligent applications.
                 </h2>
+
                 <div
                   className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4 lg:space-x-6 text-sm sm:text-base lg:text-lg"
                   style={{ color: modernColors.text }}
@@ -168,18 +191,39 @@ export default function Portfolio() {
                   <div className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span className="text-center sm:text-left">
-                      Available for opportunities
+                      Open to new opportunities
                     </span>
                   </div>
                 </div>
+
                 <p
-                  className="text-base sm:text-lg md:text-xl lg:text-2xl max-w-4xl mx-auto leading-relaxed px-4 sm:px-0"
+                  className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4 sm:px-0"
                   style={{ color: modernColors.muted }}
                 >
-                  I am driven by a passion for continuous learning and
-                  innovation, with a clear goal to build impactful products that
-                  solve real-world problems.
+                  Experience across enterprise healthcare platforms, API-driven
+                  products, cloud infrastructure, and applied machine learning.
+                  I turn complex requirements into software that is stable,
+                  maintainable, and built to scale.
                 </p>
+
+                <ul
+                  className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-3xl mx-auto px-4 sm:px-0 pt-2"
+                  aria-label="Core technologies"
+                >
+                  {TECH_STRIP.map((tech) => (
+                    <li
+                      key={tech}
+                      className="px-3 py-1 rounded-full text-xs sm:text-sm font-medium border"
+                      style={{
+                        color: modernColors.text,
+                        borderColor: `${modernColors.accent}60`,
+                        backgroundColor: `${modernColors.surface}80`,
+                      }}
+                    >
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </motion.div>
 
@@ -191,11 +235,25 @@ export default function Portfolio() {
             >
               <Button
                 size="lg"
-                onClick={handleDownloadResume}
+                onClick={() => scrollToSection("projects")}
                 className="text-white font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300"
                 style={{
                   background: `linear-gradient(90deg, ${modernColors.accent}, ${modernColors.secondary})`,
                   boxShadow: `0 0 20px ${modernColors.accent}70`,
+                }}
+              >
+                <FolderGit2 className="w-5 h-5 mr-2" />
+                View Projects
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleDownloadResume}
+                className="font-semibold transition-all duration-300"
+                style={{
+                  color: modernColors.accent,
+                  borderColor: modernColors.accent,
+                  backgroundColor: "transparent",
                 }}
               >
                 <Download className="w-5 h-5 mr-2" />
@@ -213,7 +271,7 @@ export default function Portfolio() {
                 }}
               >
                 <Mail className="w-5 h-5 mr-2" />
-                Say Hello
+                Get in Touch
               </Button>
             </motion.div>
 
@@ -284,14 +342,22 @@ export default function Portfolio() {
           </div>
         </section>
 
-        {/* All Other Sections - Now Clean and Organized */}
+        {/*
+          Section order, built for recruiters:
+          1. About       - who you are
+          2. Experience  - proof of professional work
+          3. Projects    - proof of initiative and range
+          4. Skills      - consolidated tech stack
+          5. Research    - credibility differentiator
+          6. Education   - supporting detail
+          7. Contact     - call to action
+        */}
         <AboutSection />
-        <SkillsSection />
-        {/* <Services /> */}
-        <EducationSection />
         <ExperienceSection />
         <RealProjectsSection />
+        <SkillsSection />
         <ResearchSection />
+        <EducationSection />
         <ContactSection />
       </main>
     </div>

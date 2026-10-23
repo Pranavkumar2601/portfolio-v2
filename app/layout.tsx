@@ -1,41 +1,60 @@
 import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+// Keep the global stylesheet loaded while avoiding TypeScript module resolution
+// errors when CSS declarations are unavailable in the project configuration.
+require("./globals.css");
 
 const inter = Inter({ subsets: ["latin"] });
 
+const SITE_URL = "https://pranav26.netlify.app";
+
 export const metadata: Metadata = {
-  title: "Pranav Kumar - Portfolio",
+  metadataBase: new URL(SITE_URL),
+  title: "Pranav Kumar | Software Engineer",
   description:
-    "MCA Graduate & Software Engineer specializing in Machine Learning and Full-Stack Development",
+    "Software Engineer building enterprise applications, API-driven products, cloud solutions, and applied machine learning systems with C#, .NET Core, Python, and AWS.",
   keywords: [
     "Pranav Kumar",
-    "Portfolio",
     "Software Engineer",
+    "Software Development",
+    "Enterprise Application Development",
+    "C#",
+    ".NET Core",
+    "Python",
+    "RESTful APIs",
+    "SQL",
+    "PostgreSQL",
+    "FastAPI",
+    "Docker",
+    "AWS",
     "Machine Learning",
-    "Full Stack Developer",
-    "React",
-    "Next.js",
+    "Cloud Technologies",
   ],
-  authors: [{ name: "Pranav Kumar" }],
+  authors: [{ name: "Pranav Kumar", url: SITE_URL }],
   creator: "Pranav Kumar",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
-    locale: "en_US",
-    url: "https://pranav26.netlify.app/",
-    title: "Pranav Kumar - Portfolio",
+    locale: "en_IN",
+    url: SITE_URL,
+    title: "Pranav Kumar | Software Engineer",
     description:
-      "MCA Graduate & Software Engineer specializing in Machine Learning and Full-Stack Development",
-    siteName: "Pranav Kumar Portfolio",
+      "Software Engineer delivering reliable enterprise software, scalable APIs, cloud deployments, and ML-powered applications.",
+    siteName: "Pranav Kumar",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pranav Kumar - Portfolio",
+    title: "Pranav Kumar | Software Engineer",
     description:
-      "MCA Graduate & Software Engineer specializing in Machine Learning and Full-Stack Development",
+      "Software Engineer across enterprise systems, APIs, cloud, and applied machine learning.",
   },
-  generator: "v0.dev",
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
